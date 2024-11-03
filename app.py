@@ -21,8 +21,8 @@ if st.button("Predict"):
         prediction = model.predict([user_input])
         
         # แยกคำจาก user_input
-        words = user_input.split()
-
+        #words = user_input.split()
+        words = user_input
         # ตรวจสอบความยาวของคำและ labels
         if len(prediction[0]) == len(words):
             st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
