@@ -60,11 +60,11 @@ def parse(text):
         st.error(f"An unexpected error occurred: {str(e)}")
 
 # Streamlit UI
-st.title("Text Parsing Application")
-st.write("Enter text to parse:")
+st.title("Named Entity Recognition (NER) Prediction App")
+st.write("กรุณาป้อนข้อมูลข้อความที่ต้องการให้โมเดลทำการตรวจจับ Named Entities")
 
 # Text input from user
-user_input = st.text_area("Input Text", height=150)
+user_input = st.text_area("ป้อนข้อความที่นี่", height=150)
 
 if st.button("Parse"):
     if user_input:
