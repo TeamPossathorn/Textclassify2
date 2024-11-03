@@ -21,11 +21,11 @@ if st.button("Predict"):
         words = user_input.split()  # split() แบบปกติจะลบช่องว่างเกินออกและแยกคำ
         
         # ตรวจสอบความยาวของคำใน user_input และ prediction[0]
-        if len(prediction[0]) == len(words):
-            st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
-            for i, label in enumerate(prediction[0]):
-                st.write(f"คำที่ {i+1}: {words[i]} - {label}")
-        else:
+        #if len(prediction[0]) == len(words):
+        st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
+        for i, label in enumerate(prediction[0]):
+        st.write(f"คำที่ {i+1}: {words[i]} - {label}")
+        #else:
             st.error("เกิดข้อผิดพลาด: จำนวนคำในข้อความและผลการพยากรณ์ไม่ตรงกัน กรุณาป้อนข้อความใหม่หรือตรวจสอบโมเดล")
     else:
         st.warning("กรุณาป้อนข้อความก่อนทำการพยากรณ์")
