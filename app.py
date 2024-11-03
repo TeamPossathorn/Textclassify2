@@ -77,5 +77,5 @@ if st.button("Parse"):
             st.write(user_input)
 
             st.write("### Predictions:")
-            st.write(results)
+            st.text(results)
         st.warning("Please enter some text to parse.")
