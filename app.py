@@ -23,7 +23,7 @@ if st.button("Predict"):
         if len(prediction[0]) == len(words):
             st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
             for i, label in enumerate(prediction[0]):
-                st.write(f"คำที่ {i+1}: {words[i]} - {label}")
+                st.write(f"คำที่ {i}: {words[i]} - {label}")
         else:
             st.error("เกิดข้อผิดพลาด: จำนวนคำในข้อความและผลการพยากรณ์ไม่ตรงกัน กรุณาป้อนข้อความใหม่หรือตรวจสอบโมเดล")
     else:
