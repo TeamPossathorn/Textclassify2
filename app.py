@@ -21,6 +21,6 @@ if st.button("Predict"):
         # แสดงผลลัพธ์
         st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
         for i, label in enumerate(prediction[0]):
-            st.write(f"คำที่ {i+1}: {user_input.split()[i]} - {label}")
+            st.write(f"คำที่ {i+1}: {user_input} - {label}")
     else:
         st.warning("กรุณาป้อนข้อความก่อนทำการพยากรณ์")
