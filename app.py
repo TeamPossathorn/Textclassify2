@@ -71,14 +71,25 @@ if st.button("Parse"):
         results = parse(user_input)
         
         if results is not None:  # Check if results were returned successfully
-            # Create columns for input and output
-            row1, row2 = st.rows(2)
-            
-            with row1:
-                st.subheader("Input:")
-                st.write(user_input)
-            
-            with row2:
-                st.subheader("Predictions:")
-                st.write(results)
+            # Display input and output in a horizontal layout (as rows)
+            st.markdown("<hr>", unsafe_allow_html=True)  # Horizontal line for separation
+            st.write("### Input:")
+            st.write(user_input)
+
+            st.write("### Predictions:")
+            st.write(results)
+
+            # Displaying both input and result in a single row format
+            st.markdown(f"""
+                <div style='display: flex; justify-content: space-between; align-items: center;'>
+                    <div style='flex: 1; margin-right: 10px;'>
+                        <h4>Input:</h4>
+                        <p>{user_input}</p>
+                    </div>
+                    <div style='flex: 1; margin-left: 10px;'>
+                        <h4>Predictions:</h4>
+                        <p>{results}</p>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
         st.warning("Please enter some text to parse.")
