@@ -1,25 +1,26 @@
 import streamlit as st
-import joblib  # ใช้สำหรับโหลดโมเดลในรูปแบบ .joblib
+import joblib
 import numpy as np
 
 # โหลดโมเดลที่บันทึกไว้
 model = joblib.load('model.joblib')
 
-# ส่วนติดต่อผู้ใช้ของ Streamlit
-st.title("Prediction Web App")
-st.write("ป้อนข้อมูลเพื่อทำนายผลลัพธ์ด้วยโมเดลที่โหลด")
+# ตั้งค่าหน้าเว็บแอป
+st.title("Named Entity Recognition (NER) Prediction App")
+st.write("กรุณาป้อนข้อมูลข้อความที่ต้องการให้โมเดลทำการตรวจจับ Named Entities")
 
-# สร้างอินพุตสำหรับผู้ใช้ป้อนข้อมูล
-feature_1 = st.text_area("ใส่ชื่อที่อยู่")
-#feature_2 = st.number_input("Feature 2", min_value=0.0, max_value=100.0, value=50.0)
+# สร้างอินพุตให้ผู้ใช้ป้อนข้อความ
+user_input = st.text_area("ป้อนข้อความที่นี่", "ใส่ข้อความที่คุณต้องการ")
 
 # เมื่อผู้ใช้กดปุ่ม "Predict"
 if st.button("Predict"):
-    # จัดรูปแบบข้อมูลอินพุตเป็น array
-    input_data = np.array([[feature_1]])
-
-    # ทำการพยากรณ์
-    prediction = model.predict(input_data)
-
-    # แสดงผลลัพธ์
-    st.write("ผลลัพธ์ที่พยากรณ์ได้คือ:", prediction[0])
+    if user_input:
+        # ทำการพยากรณ์โดยใช้โมเดล
+        prediction = model.predict([user_input])
+        
+        # แสดงผลลัพธ์
+        st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
+        for i, label in enumerate(prediction[0]):
+            st.write(f"คำที่ {i+1}: {user_input.split()[i]} - {label}")
+    else:
+        st.warning("กรุณาป้อนข้อความก่อนทำการพยากรณ์")
