@@ -1,6 +1,6 @@
+import re
 import streamlit as st
 import joblib
-import numpy as np
 
 # โหลดโมเดลที่บันทึกไว้
 model = joblib.load('model.joblib')
@@ -18,13 +18,15 @@ if st.button("Predict"):
         # ทำการพยากรณ์โดยใช้โมเดล
         prediction = model.predict([user_input])
         
+        # ใช้ re.split เพื่อแยกคำด้วย " " หรือ "  "
+        words = re.split(r' {1,2}', user_input)  # แยกด้วยช่องว่าง 1 หรือ 2 ช่อง
+        
         # ตรวจสอบความยาวของคำใน user_input และ prediction[0]
-        #words = user_input.split()
-        #if len(prediction[0]) == len(words):
-        #    st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
-        #    for i, label in enumerate(prediction[0]):
-        #        st.write(f"คำที่ {i}: {words[i]} - {label}")
-        #else:
-        #    st.error("เกิดข้อผิดพลาด: จำนวนคำในข้อความและผลการพยากรณ์ไม่ตรงกัน กรุณาป้อนข้อความใหม่หรือตรวจสอบโมเดล")
+        if len(prediction[0]) == len(words):
+            st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
+            for i, label in enumerate(prediction[0]):
+                st.write(f"คำที่ {i+1}: {words[i]} - {label}")
+        else:
+            st.error("เกิดข้อผิดพลาด: จำนวนคำในข้อความและผลการพยากรณ์ไม่ตรงกัน กรุณาป้อนข้อความใหม่หรือตรวจสอบโมเดล")
     else:
         st.warning("กรุณาป้อนข้อความก่อนทำการพยากรณ์")
