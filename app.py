@@ -19,8 +19,6 @@ if st.button("Predict"):
         prediction = model.predict([user_input])
         
         # แสดงผลลัพธ์
-        st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
-        for i, label in enumerate(prediction[0]):
-            st.write(f"คำที่ {i+1}: {user_input} - {label}")
+        print(user_input)
     else:
         st.warning("กรุณาป้อนข้อความก่อนทำการพยากรณ์")
