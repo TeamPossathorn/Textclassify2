@@ -19,7 +19,7 @@ if st.button("Predict"):
         prediction = model.predict([words])
         
         # แสดงผลลัพธ์
-        for i, label in enumerate(prediction[0]):
+        for i, label in enumerate(prediction[]):
             st.write(i,label)
     else:
         st.warning("กรุณาป้อนข้อความก่อนทำการพยากรณ์")
