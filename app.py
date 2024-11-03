@@ -1,49 +1,65 @@
 import streamlit as st
-import joblib
-import numpy as np
-from collections import Counter
-import matplotlib.pyplot as plt
 
-# โหลดโมเดลที่บันทึกไว้
-model = joblib.load('model.joblib')
+# Define stopwords
+stopwords = ["ผู้", "ที่", "ซึ่ง", "อัน"]
 
-# ตั้งค่าหน้าเว็บแอป
-st.title("Named Entity Recognition (NER) Prediction App")
-st.write("กรุณาป้อนข้อมูลข้อความที่ต้องการให้โมเดลทำการตรวจจับ Named Entities")
+def tokens_to_features(tokens, i):
+    word = tokens[i]
 
-# สร้างอินพุตให้ผู้ใช้ป้อนข้อความ
-user_input = st.text_area("ป้อนข้อความที่นี่", "ใส่ข้อความที่คุณต้องการ")
+    features = {
+        "bias": 1.0,
+        "word.word": word,
+        "word[:3]": word[:3],
+        "word.isspace()": word.isspace(),
+        "word.is_stopword()": word in stopwords,
+        "word.isdigit()": word.isdigit(),
+        "word.islen5": word.isdigit() and len(word) == 5
+    }
 
-# เมื่อผู้ใช้กดปุ่ม "Predict"
-if st.button("Predict"):
-    if user_input:
-        # ทำการพยากรณ์โดยใช้โมเดล
-        prediction = model.predict([user_input])
-        
-        # แยกคำจาก user_input
-        #words = user_input.split()
-        words = user_input
-        # ตรวจสอบความยาวของคำและ labels
-        if len(prediction[0]) == len(words):
-            st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
-            for i, label in enumerate(prediction[0]):
-                st.write(f"คำที่ {i+1}: {words[i]} - {label}")
-            
-            # แสดงความถี่ของแต่ละประเภท
-            st.subheader("ความถี่ของ Named Entities:")
-            entity_counts = Counter(prediction[0])
-            
-            # แสดงข้อมูลความถี่ในรูปแบบตาราง
-            st.write(entity_counts)
-            
-            # สร้างกราฟความถี่
-            fig, ax = plt.subplots()
-            ax.bar(entity_counts.keys(), entity_counts.values())
-            ax.set_title("ความถี่ของ Named Entities")
-            ax.set_xlabel("ประเภทของ Entity")
-            ax.set_ylabel("ความถี่")
-            st.pyplot(fig)
-        else:
-            st.error("เกิดข้อผิดพลาด: จำนวนคำในข้อความและผลการพยากรณ์ไม่ตรงกัน กรุณาป้อนข้อความใหม่หรือตรวจสอบโมเดล")
+    if i > 0:
+        prevword = tokens[i - 1]
+        features.update({
+            "-1.word.prevword": prevword,
+            "-1.word.isspace()": prevword.isspace(),
+            "-1.word.is_stopword()": prevword in stopwords,
+            "-1.word.isdigit()": prevword.isdigit(),
+        })
     else:
-        st.warning("กรุณาป้อนข้อความก่อนทำการพยากรณ์")
+        features["BOS"] = True
+
+    if i < len(tokens) - 1:
+        nextword = tokens[i + 1]
+        features.update({
+            "+1.word.nextword": nextword,
+            "+1.word.isspace()": nextword.isspace(),
+            "+1.word.is_stopword()": nextword in stopwords,
+            "+1.word.isdigit()": nextword.isdigit(),
+        })
+    else:
+        features["EOS"] = True
+
+    return features
+
+def parse(text):
+    tokens = text.split()
+    features = [tokens_to_features(tokens, i) for i in range(len(tokens))]
+    
+    # Assuming 'model' is defined and loaded elsewhere in your code
+    predictions = model.predict([features])[0]
+    
+    return predictions
+
+# Streamlit UI
+st.title("Text Parsing Application")
+st.write("Enter text to parse:")
+
+# Text input from user
+user_input = st.text_area("Input Text", height=150)
+
+if st.button("Parse"):
+    if user_input:
+        results = parse(user_input)
+        st.write("Predictions:")
+        st.write(results)
+    else:
+        st.warning("Please enter some text to parse.")
