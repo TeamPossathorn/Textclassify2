@@ -44,10 +44,14 @@ def parse(text):
     tokens = text.split()
     features = [tokens_to_features(tokens, i) for i in range(len(tokens))]
     
-    # Assuming 'model' is defined and loaded elsewhere in your code
-    predictions = model.predict([features])[0]
-    
-    return predictions
+    try:
+        # Assuming 'model' is defined and loaded elsewhere in your code
+        predictions = model.predict([features])[0]
+        return predictions
+    except NameError as e:
+        st.error("Model is not defined. Please ensure the model is loaded correctly.")
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {str(e)}")
 
 # Streamlit UI
 st.title("Text Parsing Application")
@@ -59,7 +63,9 @@ user_input = st.text_area("Input Text", height=150)
 if st.button("Parse"):
     if user_input:
         results = parse(user_input)
-        st.write("Predictions:")
-        st.write(results)
+        
+        if results is not None:  # Check if results were returned successfully
+            st.write("Predictions:")
+            st.write(results)
     else:
         st.warning("Please enter some text to parse.")
