@@ -19,12 +19,12 @@ if st.button("Predict"):
         prediction = model.predict([user_input])
         
         # ตรวจสอบความยาวของคำใน user_input และ prediction[0]
-        words = user_input.split()
-        if len(prediction[0]) == len(words):
-            st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
-            for i, label in enumerate(prediction[0]):
-                st.write(f"คำที่ {i}: {words[i]} - {label}")
-        else:
+        #words = user_input.split()
+        #if len(prediction[0]) == len(words):
+        #    st.subheader("ผลลัพธ์การตรวจจับ Named Entities:")
+        #    for i, label in enumerate(prediction[0]):
+        #        st.write(f"คำที่ {i}: {words[i]} - {label}")
+        #else:
             st.error("เกิดข้อผิดพลาด: จำนวนคำในข้อความและผลการพยากรณ์ไม่ตรงกัน กรุณาป้อนข้อความใหม่หรือตรวจสอบโมเดล")
     else:
         st.warning("กรุณาป้อนข้อความก่อนทำการพยากรณ์")
