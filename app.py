@@ -1,5 +1,12 @@
+%%writefile app.py
 import streamlit as st
+import joblib
+import numpy as np
+from collections import Counter
+import matplotlib.pyplot as plt
 
+# โหลดโมเดลที่บันทึกไว้
+model = joblib.load('model.joblib')
 # Define stopwords
 stopwords = ["ผู้", "ที่", "ซึ่ง", "อัน"]
 
