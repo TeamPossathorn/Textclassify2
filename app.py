@@ -71,7 +71,14 @@ if st.button("Parse"):
         results = parse(user_input)
         
         if results is not None:  # Check if results were returned successfully
-            st.write("Predictions:")
-            st.write(results)
-    else:
+            # Create columns for input and output
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.subheader("Input:")
+                st.write(user_input)
+            
+            with col2:
+                st.subheader("Predictions:")
+                st.write(results)
         st.warning("Please enter some text to parse.")
