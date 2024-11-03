@@ -16,7 +16,7 @@ words = user_input.split()
 if st.button("Predict"):
     if user_input:
         # ทำการพยากรณ์โดยใช้โมเดล
-        prediction = model.predict([user_input])
+        prediction = model.predict([words])
         
         # แสดงผลลัพธ์
         for i, label in enumerate(prediction[0]):
