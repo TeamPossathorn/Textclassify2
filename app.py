@@ -78,18 +78,4 @@ if st.button("Parse"):
 
             st.write("### Predictions:")
             st.write(results)
-
-            # Displaying both input and result in a single row format
-            st.markdown(f"""
-                <div style='display: flex; justify-content: space-between; align-items: center;'>
-                    <div style='flex: 1; margin-right: 10px;'>
-                        <h4>Input:</h4>
-                        <p>{user_input}</p>
-                    </div>
-                    <div style='flex: 1; margin-left: 10px;'>
-                        <h4>Predictions:</h4>
-                        <p>{results}</p>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
         st.warning("Please enter some text to parse.")
