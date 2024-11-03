@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # โหลดโมเดลที่บันทึกไว้
 model = joblib.load('model.joblib')
 # Define stopwords
-stopwords = ["ผู้", "ที่", "ซึ่ง", "อัน","จังหวัด"]
+stopwords = ["ผู้", "ที่", "ซึ่ง", "อัน"]
 
 def tokens_to_features(tokens, i):
     word = tokens[i]
