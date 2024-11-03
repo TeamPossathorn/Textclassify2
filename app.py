@@ -72,6 +72,6 @@ if st.button("Parse"):
         
         if results is not None:  # Check if results were returned successfully
             st.write("Predictions:")
-            st.write(user_input,results)
+            st.write(results)
     else:
         st.warning("Please enter some text to parse.")
