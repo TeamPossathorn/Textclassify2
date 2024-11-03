@@ -19,6 +19,6 @@ if st.button("Predict"):
         prediction = model.predict([user_input])
         
         # แสดงผลลัพธ์
-        print(user_input)
+        st.write(user_input)
     else:
         st.warning("กรุณาป้อนข้อความก่อนทำการพยากรณ์")
