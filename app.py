@@ -1,3 +1,4 @@
+import streamlit as st
 import joblib
 import random
 import copy
@@ -89,7 +90,6 @@ def plot_confusion_matrix(correct_tags, predicted_tags):
     plt.ylabel("True Label")
     plt.title("Confusion Matrix")
     st.pyplot(fig)
-
 
 
 # Initialize inputs and app layout
