@@ -4,10 +4,10 @@ import random
 from IPython.display import HTML
 from collections import defaultdict
 
-# Load the model
+# โหลดโมเดล
 model = joblib.load("model.joblib")
 
-# Define stopwords and feature extraction function
+# กำหนดฟังก์ชันสร้างฟีเจอร์จาก tokens
 stopwords = ["ผู้", "ที่", "ซึ่ง", "อัน"]
 
 def tokens_to_features(tokens, i):
@@ -43,48 +43,33 @@ def tokens_to_features(tokens, i):
         features["EOS"] = True
     return features
 
-# Function to run the model
-def run_model(tokens, correct_tags):
+# ฟังก์ชันรันโมเดลและประมวลผลการทำนาย
+def run_model(tokens):
     features = [tokens_to_features(tokens, i) for i in range(len(tokens))]
     predicted_tags = model.predict([features])[0]
     return predicted_tags
 
-# Streamlit app
-st.title("Thai Address Tagging Model")
-st.write("ป้อนข้อมูลที่อยู่และให้โมเดลทำการแท็กส่วนต่างๆ")
+# เริ่มแอปพลิเคชัน Streamlit
+st.title("Thai Address Tagging Application")
+st.write("กรอกข้อความที่ต้องการประมวลผลแยกเป็น 5 ฟิลด์ แล้วดูผลลัพธ์")
 
-# Inputs for the address
-name_text = st.text_input("Name", "")
-street_text = st.text_input("Street", "")
-subdistrict_text = st.text_input("Subdistrict (Tambon)", "")
-district_text = st.text_input("District (Amphoe)", "")
-province_text = st.text_input("Province", "")
-postal_code_text = st.text_input("Postal Code", "")
+# รับข้อความแยกกันเป็น 5 ฟิลด์
+input_1 = st.text_input("Input Text 1", "")
+input_2 = st.text_input("Input Text 2", "")
+input_3 = st.text_input("Input Text 3", "")
+input_4 = st.text_input("Input Text 4", "")
+input_5 = st.text_input("Input Text 5", "")
 
+# รวมข้อความทั้งหมดเป็นข้อความเดียว
+full_text = f"{input_1} {input_2} {input_3} {input_4} {input_5}"
+
+# ตรวจสอบเมื่อผู้ใช้กดปุ่มประมวลผล
 if st.button("Run Model"):
-    full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
-    tokens = full_address.split()
+    tokens = full_text.split()
+    predicted_tags = run_model(tokens)
 
-    correct_tags = []
-    for token in name_text.split():
-        correct_tags.append('O')
-    for token in street_text.split():
-        correct_tags.append('ADDR')
-    for token in subdistrict_text.split():
-        correct_tags.append('LOC')
-    for token in district_text.split():
-        correct_tags.append('LOC')
-    for token in province_text.split():
-        correct_tags.append('LOC')
-    for token in postal_code_text.split():
-        correct_tags.append('POST')
-
-    if len(tokens) != len(correct_tags):
-        st.error("Error: Number of tokens and tags do not match.")
-    else:
-        predicted_tags = run_model(tokens, correct_tags)
-        result_table = {"Token": tokens, "Correct Tag": correct_tags, "Predicted Tag": predicted_tags}
-        st.write("### Results")
-        for i, token in enumerate(tokens):
-            color = "red" if correct_tags[i] != predicted_tags[i] else "black"
-            st.markdown(f"<span style='color:{color}'>{token} - {predicted_tags[i]}</span>", unsafe_allow_html=True)
+    # แสดงผลลัพธ์
+    st.write("### Results")
+    result_table = {"Token": tokens, "Predicted Tag": predicted_tags}
+    for i, token in enumerate(tokens):
+        st.write(f"{token}: {predicted_tags[i]}")
