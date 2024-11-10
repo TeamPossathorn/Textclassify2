@@ -1,13 +1,11 @@
-import streamlit as st
 import joblib
 import random
 import copy
-import numpy as np  # เพิ่มการ import numpy ที่นี่
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 from collections import Counter
-
+import numpy as np
 
 # Load the model
 model = joblib.load("model.joblib")
@@ -76,10 +74,30 @@ def plot_entity_distribution(predicted_tags):
     plt.title('Entity Distribution in Predictions')
     st.pyplot(fig)
 
+#def plot_confusion_matrix(correct_tags, predicted_tags):
+    # สร้างรายการ labels ที่มีอยู่ใน correct_tags และ predicted_tags
+    #labels = sorted(set(correct_tags) | set(predicted_tags))
+
+    # ตรวจสอบว่า correct_tags และ predicted_tags มีข้อมูลก่อนที่จะสร้าง Confusion Matrix
+    #if len(correct_tags) == 0 or len(predicted_tags) == 0:
+    #    st.error("Error: No correct or predicted tags available for confusion matrix.")
+    #    return
+
+    #cm = confusion_matrix(correct_tags, predicted_tags, labels=labels)
+    #fig, ax = plt.subplots()
+    #sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Blues", ax=ax)
+    #plt.xlabel("Predicted Label")
+    #plt.ylabel("True Label")
+    #plt.title("Confusion Matrix")
+    #st.pyplot(fig)
+
 def plot_confusion_matrix(correct_tags, predicted_tags):
     labels = sorted(set(correct_tags) | set(predicted_tags))
+    # ตรวจสอบว่า correct_tags และ predicted_tags มีข้อมูลก่อนที่จะสร้าง Confusion Matrix
+    if len(correct_tags) == 0 or len(predicted_tags) == 0:
+        st.error("Error: No correct or predicted tags available for confusion matrix.")
+        return
     cm = confusion_matrix(correct_tags, predicted_tags, labels=labels)
-
     fig, ax = plt.subplots()
     
     # สร้าง mask เพื่อให้ค่าในเส้นทแยงมุมเป็น False (ไม่ต้องใช้สีแดง) และค่าที่เหลือเป็น True (ใช้สีแดง)
@@ -97,6 +115,8 @@ def plot_confusion_matrix(correct_tags, predicted_tags):
     plt.ylabel("True Label")
     plt.title("Confusion Matrix")
     plt.show()
+
+
 
 # Initialize inputs and app layout
 st.title("Thai Address Tagging Model")
