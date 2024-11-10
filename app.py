@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 from collections import Counter
-
+import numpy as np
 # Load the model
 model = joblib.load("model.joblib")
 
