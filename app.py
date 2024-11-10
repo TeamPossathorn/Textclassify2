@@ -2,6 +2,10 @@ import streamlit as st
 import joblib
 import random
 import copy
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
+from collections import Counter
 
 # Load the model
 model = joblib.load("model.joblib")
@@ -60,6 +64,26 @@ def display_results(tokens, correct_tags, predicted_tags, typo_indices):
         result_html += f'<span style="color:{color}">{token} - {predicted_tag}</span> '
     st.markdown(result_html, unsafe_allow_html=True)
 
+def plot_entity_distribution(predicted_tags):
+    entity_counts = Counter(predicted_tags)
+    labels, values = zip(*entity_counts.items())
+    fig, ax = plt.subplots()
+    ax.bar(labels, values)
+    plt.xlabel('Entity Type')
+    plt.ylabel('Count')
+    plt.title('Entity Distribution in Predictions')
+    st.pyplot(fig)
+
+def plot_confusion_matrix(correct_tags, predicted_tags):
+    labels = sorted(set(correct_tags + predicted_tags))
+    cm = confusion_matrix(correct_tags, predicted_tags, labels=labels)
+    fig, ax = plt.subplots()
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Blues", ax=ax)
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.title("Confusion Matrix")
+    st.pyplot(fig)
+
 # Initialize inputs and app layout
 st.title("Thai Address Tagging Model")
 st.write("กรอกข้อมูลที่อยู่และกดปุ่ม Run เพื่อประมวลผลแท็ก")
@@ -103,6 +127,14 @@ if st.button("Run Model"):
 
         predicted_tags = run_model(tokens)
         display_results(tokens, correct_tags, predicted_tags, st.session_state['typo_indices'])
+        
+        # Plot Entity Distribution Bar Chart
+        st.write("### Entity Distribution")
+        plot_entity_distribution(predicted_tags)
+
+        # Plot Confusion Matrix
+        st.write("### Confusion Matrix")
+        plot_confusion_matrix(correct_tags, predicted_tags)
 
 # Scramble tokens
 if st.button("Scramble"):
@@ -148,16 +180,3 @@ if st.button("Simulate Typo"):
     st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
     predicted_tags = run_model(st.session_state['modified_tokens'])
     display_results(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'], predicted_tags, st.session_state['typo_indices'])
-
-from sklearn.metrics import confusion_matrix
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-def plot_confusion_matrix(y_true, y_pred, labels):
-    cm = confusion_matrix(y_true, y_pred, labels=labels)
-    fig, ax = plt.subplots()
-    sns.heatmap(cm, annot=True, fmt='d', xticklabels=labels, yticklabels=labels, cmap='Blues', ax=ax)
-    plt.xlabel('Predicted')
-    plt.ylabel('True')
-    st.pyplot(fig)
-
