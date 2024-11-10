@@ -65,7 +65,7 @@ full_text = f"{input_1} {input_2} {input_3} {input_4} {input_5}"
 
 # ตรวจสอบเมื่อผู้ใช้กดปุ่มประมวลผล
 if st.button("Run Model"):
-    tokens = full_text.split()
+    #tokens = full_text.split()
     predicted_tags = run_model(tokens)
 
     # แสดงผลลัพธ์
