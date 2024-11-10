@@ -75,7 +75,14 @@ def plot_entity_distribution(predicted_tags):
     st.pyplot(fig)
 
 def plot_confusion_matrix(correct_tags, predicted_tags):
-    labels = sorted(set(correct_tags + predicted_tags))
+    # สร้างรายการ labels ที่มีอยู่ใน correct_tags และ predicted_tags
+    labels = sorted(set(correct_tags) | set(predicted_tags))
+
+    # ตรวจสอบว่า correct_tags และ predicted_tags มีข้อมูลก่อนที่จะสร้าง Confusion Matrix
+    if not correct_tags or not predicted_tags:
+        st.error("Error: No correct or predicted tags available for confusion matrix.")
+        return
+
     cm = confusion_matrix(correct_tags, predicted_tags, labels=labels)
     fig, ax = plt.subplots()
     sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Blues", ax=ax)
@@ -83,6 +90,7 @@ def plot_confusion_matrix(correct_tags, predicted_tags):
     plt.ylabel("True Label")
     plt.title("Confusion Matrix")
     st.pyplot(fig)
+)
 
 # Initialize inputs and app layout
 st.title("Thai Address Tagging Model")
