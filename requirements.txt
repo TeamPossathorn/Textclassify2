@@ -4,3 +4,4 @@ scikit-learn
 joblib
 sklearn-crfsuite
 matplotlib
+seaborn
