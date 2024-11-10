@@ -75,23 +75,26 @@ def plot_entity_distribution(predicted_tags):
     st.pyplot(fig)
 
 def plot_confusion_matrix(correct_tags, predicted_tags):
-    # สร้างรายการ labels ที่มีอยู่ใน correct_tags และ predicted_tags
     labels = sorted(set(correct_tags) | set(predicted_tags))
-
-    # ตรวจสอบว่า correct_tags และ predicted_tags มีข้อมูลก่อนที่จะสร้าง Confusion Matrix
-    if len(correct_tags) == 0 or len(predicted_tags) == 0:
-        st.error("Error: No correct or predicted tags available for confusion matrix.")
-        return
-
     cm = confusion_matrix(correct_tags, predicted_tags, labels=labels)
+
     fig, ax = plt.subplots()
-    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Blues", ax=ax)
+    
+    # สร้าง mask เพื่อให้ค่าในเส้นทแยงมุมเป็น False (ไม่ต้องใช้สีแดง) และค่าที่เหลือเป็น True (ใช้สีแดง)
+    mask = np.zeros_like(cm, dtype=bool)
+    mask[np.eye(len(cm), dtype=bool)] = False  # ค่าทำนายถูก (เส้นทแยงมุม)
+    mask[~np.eye(len(cm), dtype=bool)] = True  # ค่าทำนายผิด (นอกเส้นทแยงมุม)
+
+    # Plot heatmap โดยใช้สีพื้นฐาน (เช่น "Blues") แต่เน้นสีแดงใน cell ที่ผิด
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels,
+                cmap="Blues", mask=mask, cbar=False, ax=ax)
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels,
+                cmap="Reds", mask=~mask, cbar=False, ax=ax)
+    
     plt.xlabel("Predicted Label")
     plt.ylabel("True Label")
     plt.title("Confusion Matrix")
-    st.pyplot(fig)
-
-
+    plt.show()
 
 # Initialize inputs and app layout
 st.title("Thai Address Tagging Model")
