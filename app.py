@@ -79,7 +79,7 @@ def plot_confusion_matrix(correct_tags, predicted_tags):
     labels = sorted(set(correct_tags) | set(predicted_tags))
 
     # ตรวจสอบว่า correct_tags และ predicted_tags มีข้อมูลก่อนที่จะสร้าง Confusion Matrix
-    if not correct_tags or not predicted_tags:
+    if len(correct_tags) == 0 or len(predicted_tags) == 0:
         st.error("Error: No correct or predicted tags available for confusion matrix.")
         return
 
@@ -90,6 +90,7 @@ def plot_confusion_matrix(correct_tags, predicted_tags):
     plt.ylabel("True Label")
     plt.title("Confusion Matrix")
     st.pyplot(fig)
+
 
 
 # Initialize inputs and app layout
