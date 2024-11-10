@@ -1,12 +1,12 @@
 import streamlit as st
 import joblib
 import random
-from collections import defaultdict
+import copy
 
-# โหลดโมเดล
+# Load the model
 model = joblib.load("model.joblib")
 
-# กำหนดฟังก์ชันสร้างฟีเจอร์จาก tokens
+# Define stopwords and feature extraction function
 stopwords = ["ผู้", "ที่", "ซึ่ง", "อัน"]
 
 def tokens_to_features(tokens, i):
@@ -42,33 +42,109 @@ def tokens_to_features(tokens, i):
         features["EOS"] = True
     return features
 
-# ฟังก์ชันรันโมเดลและประมวลผลการทำนาย
+# Function to run the model and display results
 def run_model(tokens):
     features = [tokens_to_features(tokens, i) for i in range(len(tokens))]
     predicted_tags = model.predict([features])[0]
     return predicted_tags
 
-# เริ่มแอปพลิเคชัน Streamlit
-st.title("Thai Address Tagging Application")
-st.write("กรอกข้อความที่ต้องการประมวลผลแยกเป็น 5 ฟิลด์ แล้วดูผลลัพธ์")
+def display_results(tokens, correct_tags, predicted_tags, typo_indices):
+    # Display the results with color coding
+    result_html = ''
+    for i, (token, correct_tag, predicted_tag) in enumerate(zip(tokens, correct_tags, predicted_tags)):
+        color = 'black' if correct_tag == predicted_tag else 'red'
+        if i in typo_indices:
+            typo_idx = typo_indices[i]
+            if typo_idx is not None and typo_idx < len(token):
+                token = token[:typo_idx] + f'<span style="color:cyan">{token[typo_idx]}</span>' + token[typo_idx+1:]
+        result_html += f'<span style="color:{color}">{token} - {predicted_tag}</span> '
+    st.markdown(result_html, unsafe_allow_html=True)
 
-# รับข้อความแยกกันเป็น 5 ฟิลด์
-input_1 = st.text_input("Input Text 1", "")
-input_2 = st.text_input("Input Text 2", "")
-input_3 = st.text_input("Input Text 3", "")
-input_4 = st.text_input("Input Text 4", "")
-input_5 = st.text_input("Input Text 5", "")
+# Initialize inputs and app layout
+st.title("Thai Address Tagging Model")
+st.write("กรอกข้อมูลที่อยู่และกดปุ่ม Run เพื่อประมวลผลแท็ก")
 
-# รวมข้อความทั้งหมดเป็นข้อความเดียว
-full_text = f"{input_1} {input_2} {input_3} {input_4} {input_5}"
+name_text = st.text_input("Name")
+street_text = st.text_input("Street Address")
+subdistrict_text = st.text_input("Subdistrict (Tambon)")
+district_text = st.text_input("District (Amphoe)")
+province_text = st.text_input("Province")
+postal_code_text = st.text_input("Postal Code")
 
-# ตรวจสอบเมื่อผู้ใช้กดปุ่มประมวลผล
+# Initialize global variables for tracking typos
+if 'original_tokens' not in st.session_state:
+    st.session_state['original_tokens'] = []
+    st.session_state['original_correct_tags'] = []
+    st.session_state['modified_tokens'] = []
+    st.session_state['modified_correct_tags'] = []
+    st.session_state['typo_indices'] = {}
+
+# Run model on input
 if st.button("Run Model"):
-    #tokens = full_text.split()
-    predicted_tags = run_model(tokens)
+    full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
+    tokens = full_address.split()
+    correct_tags = (
+        ['O'] * len(name_text.split()) +
+        ['ADDR'] * len(street_text.split()) +
+        ['LOC'] * len(subdistrict_text.split()) +
+        ['LOC'] * len(district_text.split()) +
+        ['LOC'] * len(province_text.split()) +
+        ['POST'] * len(postal_code_text.split())
+    )
 
-    # แสดงผลลัพธ์
-    st.write("### Results")
-    result_table = {"Token": tokens, "Predicted Tag": predicted_tags}
-    for i, token in enumerate(tokens):
-        st.write(f"{token}: {predicted_tags[i]}")
+    if len(tokens) != len(correct_tags):
+        st.error("Error: Number of tokens and tags do not match.")
+    else:
+        st.session_state['original_tokens'] = tokens
+        st.session_state['original_correct_tags'] = correct_tags
+        st.session_state['modified_tokens'] = tokens.copy()
+        st.session_state['modified_correct_tags'] = correct_tags.copy()
+        st.session_state['typo_indices'] = {}
+
+        predicted_tags = run_model(tokens)
+        display_results(tokens, correct_tags, predicted_tags, st.session_state['typo_indices'])
+
+# Scramble tokens
+if st.button("Scramble"):
+    combined = list(zip(st.session_state['modified_tokens'], st.session_state['modified_correct_tags']))
+    random.shuffle(combined)
+    st.session_state['modified_tokens'], st.session_state['modified_correct_tags'] = zip(*combined)
+    st.session_state['typo_indices'] = {}
+    predicted_tags = run_model(st.session_state['modified_tokens'])
+    display_results(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'], predicted_tags, st.session_state['typo_indices'])
+
+# Reset tokens to original
+if st.button("Reset"):
+    st.session_state['modified_tokens'] = st.session_state['original_tokens'].copy()
+    st.session_state['modified_correct_tags'] = st.session_state['original_correct_tags'].copy()
+    st.session_state['typo_indices'] = {}
+    predicted_tags = run_model(st.session_state['modified_tokens'])
+    display_results(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'], predicted_tags, st.session_state['typo_indices'])
+
+# Simulate typos in tokens
+def introduce_realistic_typos(tokens):
+    typo_indices = {}
+    for idx in random.sample(range(len(tokens)), max(1, len(tokens) // 2)):
+        token = tokens[idx]
+        if len(token) == 0:
+            continue
+        typo_type = random.choice(['substitute', 'omit', 'transpose', 'duplicate'])
+        chars = list(token)
+        i = random.randint(0, len(chars) - 1)
+        if typo_type == 'substitute':
+            chars[i] = chr((ord(chars[i]) & ~0xFF) + random.randint(0, 255))
+        elif typo_type == 'omit':
+            chars.pop(i)
+        elif typo_type == 'transpose' and len(chars) > 1:
+            if i < len(chars) - 1:
+                chars[i], chars[i + 1] = chars[i + 1], chars[i]
+        elif typo_type == 'duplicate':
+            chars.insert(i, chars[i])
+        tokens[idx] = ''.join(chars)
+        typo_indices[idx] = i
+    return tokens, typo_indices
+
+if st.button("Simulate Typo"):
+    st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
+    predicted_tags = run_model(st.session_state['modified_tokens'])
+    display_results(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'], predicted_tags, st.session_state['typo_indices'])
