@@ -2,10 +2,12 @@ import streamlit as st
 import joblib
 import random
 import copy
+import numpy as np  # เพิ่มการ import numpy ที่นี่
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 from collections import Counter
+
 
 # Load the model
 model = joblib.load("model.joblib")
