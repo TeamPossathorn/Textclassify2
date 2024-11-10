@@ -1,7 +1,6 @@
 import streamlit as st
 import joblib
 import random
-from IPython.display import HTML
 from collections import defaultdict
 
 # โหลดโมเดล
