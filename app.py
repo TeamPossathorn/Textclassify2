@@ -148,3 +148,16 @@ if st.button("Simulate Typo"):
     st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
     predicted_tags = run_model(st.session_state['modified_tokens'])
     display_results(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'], predicted_tags, st.session_state['typo_indices'])
+
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+def plot_confusion_matrix(y_true, y_pred, labels):
+    cm = confusion_matrix(y_true, y_pred, labels=labels)
+    fig, ax = plt.subplots()
+    sns.heatmap(cm, annot=True, fmt='d', xticklabels=labels, yticklabels=labels, cmap='Blues', ax=ax)
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    st.pyplot(fig)
+
