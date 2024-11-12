@@ -4,27 +4,23 @@ import requests
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pythainlp.tag.named_entity import ThaiNameTagger  # PyThaiNLP's NER module
 from sklearn.metrics import confusion_matrix, classification_report
 from collections import Counter
 
-# Load the GitHub model and Thai language NER model
-# (Replace these paths with actual GitHub links and model loading logic)
-github_model_path = "model.joblib"  # Example placeholder
-local_thai_model_path = "path/to/local/thai/ner/model.joblib"  # Example placeholder
+# Load GitHub model
+github_model_path = "path/to/github/model.joblib"  # Replace with actual model path
 
-# Assume these paths are either URLs (for GitHub) or local paths
-# Load models - replace with actual loading code for each model type
+# Load GitHub model (replace with actual loading method)
 try:
     github_model = joblib.load(github_model_path)
 except Exception as e:
     st.error(f"Could not load GitHub model: {e}")
 
-try:
-    local_thai_model = joblib.load(local_thai_model_path)
-except Exception as e:
-    st.error(f"Could not load Thai NER model: {e}")
+# Load PyThaiNLP NER model
+thai_ner = ThaiNameTagger()
 
-# Sample stopwords and feature extraction for Thai NER processing
+# Sample stopwords and feature extraction for GitHub model processing
 stopwords = ["ผู้", "ที่", "ซึ่ง", "อัน"]
 
 def tokens_to_features(tokens, i):
@@ -60,10 +56,14 @@ def tokens_to_features(tokens, i):
         features["EOS"] = True
     return features
 
-# Function to run model prediction
-def run_model(tokens, model):
+# Function to run GitHub model prediction
+def run_github_model(tokens, model):
     features = [tokens_to_features(tokens, i) for i in range(len(tokens))]
     return model.predict([features])[0]
+
+# Function to run PyThaiNLP NER model
+def run_thai_ner(text):
+    return thai_ner.get_ner(text)
 
 # Visualization functions
 def display_entities(tokens, predicted_tags):
@@ -100,7 +100,7 @@ def display_classification_report(y_true, y_pred):
 
 # Streamlit UI
 st.title("NER Visualization with Two Models")
-st.write("Compare GitHub Model and Local Thai NER Model")
+st.write("Compare GitHub Model and PyThaiNLP NER Model")
 
 # User input text
 input_text = st.text_area("Enter text for NER")
@@ -108,24 +108,26 @@ input_text = st.text_area("Enter text for NER")
 if st.button("Run Models"):
     tokens = input_text.split()
 
-    # Run both models and display results
+    # Run GitHub model and display results
     st.write("### GitHub Model Predictions")
-    github_predictions = run_model(tokens, github_model)
+    github_predictions = run_github_model(tokens, github_model)
     display_entities(tokens, github_predictions)
     plot_entity_distribution(github_predictions, "GitHub Model")
 
-    st.write("### Local Thai Model Predictions")
-    thai_predictions = run_model(tokens, local_thai_model)
-    display_entities(tokens, thai_predictions)
-    plot_entity_distribution(thai_predictions, "Local Thai Model")
+    # Run PyThaiNLP NER model and display results
+    st.write("### PyThaiNLP Model Predictions")
+    thai_ner_results = run_thai_ner(input_text)
+    thai_predictions = [tag for _, tag in thai_ner_results]  # Extract entity tags only
+    display_entities([word for word, _ in thai_ner_results], thai_predictions)
+    plot_entity_distribution(thai_predictions, "PyThaiNLP Model")
 
-    # Display Confusion Matrix for GitHub Model vs Thai Model
-    st.write("### Confusion Matrix (GitHub Model vs Thai Model)")
+    # Display Confusion Matrix for GitHub Model vs PyThaiNLP Model
+    st.write("### Confusion Matrix (GitHub Model vs PyThaiNLP Model)")
     plot_confusion_matrix(github_predictions, thai_predictions)
 
     # Display Classification Report
     st.write("### Classification Report for GitHub Model")
     display_classification_report(github_predictions, tokens)
 
-    st.write("### Classification Report for Local Thai Model")
+    st.write("### Classification Report for PyThaiNLP Model")
     display_classification_report(thai_predictions, tokens)
