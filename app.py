@@ -4,7 +4,7 @@ import requests
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from pythainlp.tag.named_entity import ThaiNameTagger  # PyThaiNLP's NER module
+from pythainlp.tag import ner
 from sklearn.metrics import confusion_matrix, classification_report
 from collections import Counter
 
@@ -18,7 +18,7 @@ except Exception as e:
     st.error(f"Could not load GitHub model: {e}")
 
 # Load PyThaiNLP NER model
-thai_ner = ThaiNameTagger()
+ner_tagger = ner()
 
 # Sample stopwords and feature extraction for GitHub model processing
 stopwords = ["ผู้", "ที่", "ซึ่ง", "อัน"]
@@ -63,7 +63,7 @@ def run_github_model(tokens, model):
 
 # Function to run PyThaiNLP NER model
 def run_thai_ner(text):
-    return thai_ner.get_ner(text)
+    return ner_tagger.tag(text.split())
 
 # Visualization functions
 def display_entities(tokens, predicted_tags):
