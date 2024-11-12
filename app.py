@@ -135,25 +135,25 @@ col1, col2, col3 = st.columns([0.5, 2, 2])
 
 # Column 1: Input Section
 with col1:
-    st.markdown("<h2 style='font-size:24px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-size:12px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
     
     # Adjusted font size for each label
-    st.markdown("<p style='font-size:18px;'>Name</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:6px;'>Name</p>", unsafe_allow_html=True)
     name_text = st.text_input("", key="name")
 
-    st.markdown("<p style='font-size:18px;'>Street Address</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:6px;'>Street Address</p>", unsafe_allow_html=True)
     street_text = st.text_input("", key="street_address")
 
-    st.markdown("<p style='font-size:18px;'>Subdistrict (Tambon)</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:6px;'>Subdistrict (Tambon)</p>", unsafe_allow_html=True)
     subdistrict_text = st.text_input("", key="subdistrict")
 
-    st.markdown("<p style='font-size:18px;'>District (Amphoe)</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:6px;'>District (Amphoe)</p>", unsafe_allow_html=True)
     district_text = st.text_input("", key="district")
 
-    st.markdown("<p style='font-size:18px;'>Province</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:6px;'>Province</p>", unsafe_allow_html=True)
     province_text = st.text_input("", key="province")
 
-    st.markdown("<p style='font-size:18px;'>Postal Code</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:6px;'>Postal Code</p>", unsafe_allow_html=True)
     postal_code_text = st.text_input("", key="postal_code")
 
 
