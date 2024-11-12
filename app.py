@@ -141,7 +141,7 @@ st.markdown(
     /* Apply custom style to all text input fields */
     .custom-text-input input {
         font-size: 18px;  /* Adjust font size inside input */
-        height: 35px;     /* Adjust height of the input box */
+        height: 10px;     /* Adjust height of the input box */
         padding: 2px;     /* Add padding for better spacing */
     }
     </style>
