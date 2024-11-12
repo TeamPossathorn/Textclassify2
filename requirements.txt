@@ -1,7 +1,9 @@
 streamlit
-numpy
-scikit-learn
 joblib
-sklearn-crfsuite
+requests
+numpy
 matplotlib
 seaborn
+scikit-learn
+pythainlp
+deepcut
