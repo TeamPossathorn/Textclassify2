@@ -9,7 +9,7 @@ from collections import Counter
 
 # Load the GitHub model and Thai language NER model
 # (Replace these paths with actual GitHub links and model loading logic)
-github_model_path = "path/to/github/model.joblib"  # Example placeholder
+github_model_path = "model.joblib"  # Example placeholder
 local_thai_model_path = "path/to/local/thai/ner/model.joblib"  # Example placeholder
 
 # Assume these paths are either URLs (for GitHub) or local paths
