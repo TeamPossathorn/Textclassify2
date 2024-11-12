@@ -100,8 +100,13 @@ def update_display(tokens, correct_tags):
     st.session_state['all_predicted_tags'].extend(predicted_tags)
     #plot_cumulative_confusion_matrix()
 
-# Define typo introduction function
+# Define typo introduction function with error handling
 def introduce_realistic_typos(tokens):
+    # Check if tokens is empty
+    if not tokens:
+        st.error("Error: No tokens available to introduce typos.")
+        return tokens, {}
+
     typo_indices = {}
     for idx in random.sample(range(len(tokens)), max(1, len(tokens) // 2)):
         token = tokens[idx]
@@ -193,8 +198,11 @@ with col1:
         update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
     if st.button("Simulate Typo"):
+    if 'modified_tokens' in st.session_state and st.session_state['modified_tokens']:
         st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
         update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
+    else:
+        st.error("Error: Modified tokens are empty or not initialized.")
 
     if st.button("Reset Cumulative Data"):
         st.session_state['all_true_tags'] = []
