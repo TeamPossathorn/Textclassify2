@@ -152,15 +152,20 @@ col1, spacer, col2 = st.columns([1, 0.5, 2])
 
 # Apply the custom style to column1
 with col1:
-    st.markdown('<div class="custom-column-style">', unsafe_allow_html=True)
-    
-    st.markdown("<h2>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
-    name_text = st.text_input("Name")
-    street_text = st.text_input("Street Address")
-    subdistrict_text = st.text_input("Subdistrict (Tambon)")
-    district_text = st.text_input("District (Amphoe)")
-    province_text = st.text_input("Province")
-    postal_code_text = st.text_input("Postal Code")
+   st.markdown("<h2 style='font-size:24px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
+    # Adjusted font size for each label
+    st.markdown("<p style='font-size:12px;'>Name</p>", unsafe_allow_html=True)
+    name_text = st.text_input("", key="name")
+    st.markdown("<p style='font-size:12px;'>Street Address</p>", unsafe_allow_html=True)
+    street_text = st.text_input("", key="street_address")
+    st.markdown("<p style='font-size:12px;'>Subdistrict (Tambon)</p>", unsafe_allow_html=True)
+    subdistrict_text = st.text_input("", key="subdistrict")
+    st.markdown("<p style='font-size:12px;'>District (Amphoe)</p>", unsafe_allow_html=True)
+    district_text = st.text_input("", key="district")
+    st.markdown("<p style='font-size:12px;'>Province</p>", unsafe_allow_html=True)
+    province_text = st.text_input("", key="province")
+    st.markdown("<p style='font-size:12px;'>Postal Code</p>", unsafe_allow_html=True)
+    postal_code_text = st.text_input("", key="postal_code")
 
     if st.button("Run Model"):
         full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
