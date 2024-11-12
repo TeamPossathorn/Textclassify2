@@ -139,11 +139,11 @@ st.markdown(
     """
     <style>
     .custom-column-style {
-        font-size: 10px;  /* Adjust font size */
-        padding: 10px;    /* Adjust padding for spacing within the column */
+        font-size: 8px;  /* Adjust font size */
+        padding: 0px;    /* Adjust padding for spacing within the column */
     }
     .custom-column-style h2 {
-        font-size: 18px;  /* Adjust title font size */
+        font-size: 16px;  /* Adjust title font size */
     }
     </style>
     """,
