@@ -63,16 +63,21 @@ def display_results(tokens, correct_tags, predicted_tags, typo_indices):
         result_html += f'<span style="color:{color}">{token} - {predicted_tag}</span> '
     st.markdown(result_html, unsafe_allow_html=True)
 
-# Plot entity distribution
 def plot_entity_distribution(predicted_tags):
     entity_counts = Counter(predicted_tags)
-    labels, values = zip(*entity_counts.items())
-    fig, ax = plt.subplots()
-    ax.bar(labels, values)
-    plt.xlabel('Entity Type')
-    plt.ylabel('Count')
-    plt.title('Entity Distribution in Predictions')
-    st.pyplot(fig)
+    
+    # Check if entity_counts has any items before unpacking
+    if entity_counts:
+        labels, values = zip(*entity_counts.items())
+        fig, ax = plt.subplots()
+        ax.bar(labels, values)
+        plt.xlabel('Entity Type')
+        plt.ylabel('Count')
+        plt.title('Entity Distribution in Predictions')
+        st.pyplot(fig)
+    else:
+        st.write("No predicted tags available for entity distribution.")
+
 
 # Plot cumulative confusion matrix
 def plot_cumulative_confusion_matrix():
