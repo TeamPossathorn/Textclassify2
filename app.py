@@ -89,14 +89,11 @@ def plot_cumulative_confusion_matrix():
 def update_display(tokens, correct_tags):
     predicted_tags = run_model(tokens)
     display_results(tokens, correct_tags, predicted_tags, st.session_state['typo_indices'])
-    if st.session_state['show_entity_distribution']:
-        with entity_dist_container:
-            plot_entity_distribution(predicted_tags)
+    plot_entity_distribution(predicted_tags)
+    # Accumulate results for cumulative confusion matrix
     st.session_state['all_true_tags'].extend(correct_tags)
     st.session_state['all_predicted_tags'].extend(predicted_tags)
-    if st.session_state['show_confusion_matrix']:
-        with confusion_matrix_container:
-            plot_cumulative_confusion_matrix()
+    plot_cumulative_confusion_matrix()
 
 # Define typo introduction function
 def introduce_realistic_typos(tokens):
