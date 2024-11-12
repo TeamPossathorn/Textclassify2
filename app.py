@@ -76,7 +76,7 @@ def plot_entity_distribution(predicted_tags):
 
 def plot_confusion_matrix(correct_tags, predicted_tags):
     labels = sorted(set(correct_tags) | set(predicted_tags))
-    if len(correct_tags) == 0 or len(predicted_tags) == 0::
+    if len(correct_tags) == 0 or len(predicted_tags) == 0:
         st.error("Error: No correct or predicted tags available for confusion matrix.")
         return
     cm = confusion_matrix(correct_tags, predicted_tags, labels=labels)
