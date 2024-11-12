@@ -74,6 +74,24 @@ def plot_entity_distribution(predicted_tags):
     plt.title('Entity Distribution in Predictions')
     st.pyplot(fig)
 
+def plot_confusion_matrix(correct_tags, predicted_tags):
+    labels = sorted(set(correct_tags) | set(predicted_tags))
+    if len(correct_tags) == 0 or len(predicted_tags) == 0::
+        st.error("Error: No correct or predicted tags available for confusion matrix.")
+        return
+    cm = confusion_matrix(correct_tags, predicted_tags, labels=labels)
+    fig, ax = plt.subplots()
+    mask_correct = np.eye(len(cm), dtype=bool)
+    mask_incorrect = ~mask_correct
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels,
+                cmap="Blues", mask=mask_incorrect, cbar=False, ax=ax)
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels,
+                cmap="Reds", mask=mask_correct, cbar=False, ax=ax)
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.title("Confusion Matrix")
+    st.pyplot(fig)
+    
 # Plot cumulative confusion matrix
 def plot_cumulative_confusion_matrix():
     labels = sorted(set(st.session_state['all_true_tags']) | set(st.session_state['all_predicted_tags']))
@@ -169,10 +187,6 @@ if st.button("Scramble"):
     st.session_state['typo_indices'] = {}
     update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
-# Simulate typos in tokens
-if st.button("Simulate Typo"):
-    st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
-    update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
 # Reset cumulative confusion matrix data
 if st.button("Reset Cumulative Data"):
