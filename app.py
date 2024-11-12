@@ -136,8 +136,8 @@ if 'show_confusion_matrix' not in st.session_state:
     st.session_state['show_confusion_matrix'] = True
 
 # Layout
-top_left, top_right = st.columns(1)
-bottom_left, bottom_right = st.columns(2)
+top_left, top_right = st.columns(2)
+bottom_right = st.columns(1)
 
 # Top-left: Input section
 with top_left:
