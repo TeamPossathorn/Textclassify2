@@ -135,20 +135,19 @@ col1, spacer, col2 = st.columns([1, 0.5, 2])
 
 # Column 1: Input Section
 # Custom CSS to adjust font size and padding for column1
-#st.markdown(
-#    """
-#    <style>
-#    .custom-column-style {
-#        font-size: 1px;  /* Adjust font size */
-#        padding: 0px;    /* Adjust padding for spacing within the column */
-#    }
-#    .custom-column-style h2 {
-#        font-size: 16px;  /* Adjust title font size */
-#    }
-#    </style>
-#    """,
-#    unsafe_allow_html=True
-#)
+st.markdown(
+    """
+    <style>
+    /* Apply custom style to all text input fields */
+    .custom-text-input input {
+        font-size: 18px;  /* Adjust font size inside input */
+        height: 35px;     /* Adjust height of the input box */
+        padding: 5px;     /* Add padding for better spacing */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Apply the custom style to column1
 with col1:
