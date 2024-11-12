@@ -74,23 +74,15 @@ def plot_entity_distribution(predicted_tags):
     plt.title('Entity Distribution in Predictions')
     st.pyplot(fig)
 
-# Plot confusion matrix
-def plot_confusion_matrix(correct_tags, predicted_tags):
-    labels = sorted(set(correct_tags) | set(predicted_tags))
-    if len(correct_tags) == 0 or len(predicted_tags) == 0:
-        st.error("Error: No correct or predicted tags available for confusion matrix.")
-        return
-    cm = confusion_matrix(correct_tags, predicted_tags, labels=labels)
+# Plot cumulative confusion matrix
+def plot_cumulative_confusion_matrix():
+    labels = sorted(set(st.session_state['all_true_tags']) | set(st.session_state['all_predicted_tags']))
+    cm = confusion_matrix(st.session_state['all_true_tags'], st.session_state['all_predicted_tags'], labels=labels)
     fig, ax = plt.subplots()
-    mask_correct = np.eye(len(cm), dtype=bool)
-    mask_incorrect = ~mask_correct
-    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels,
-                cmap="Blues", mask=mask_incorrect, cbar=False, ax=ax)
-    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels,
-                cmap="Reds", mask=mask_correct, cbar=False, ax=ax)
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Blues", ax=ax)
     plt.xlabel("Predicted Label")
     plt.ylabel("True Label")
-    plt.title("Confusion Matrix")
+    plt.title("Cumulative Confusion Matrix")
     st.pyplot(fig)
 
 # Common function to update and display results
@@ -98,7 +90,10 @@ def update_display(tokens, correct_tags):
     predicted_tags = run_model(tokens)
     display_results(tokens, correct_tags, predicted_tags, st.session_state['typo_indices'])
     plot_entity_distribution(predicted_tags)
-    plot_confusion_matrix(correct_tags, predicted_tags)
+    # Accumulate results for cumulative confusion matrix
+    st.session_state['all_true_tags'].extend(correct_tags)
+    st.session_state['all_predicted_tags'].extend(predicted_tags)
+    plot_cumulative_confusion_matrix()
 
 # Define typo introduction function
 def introduce_realistic_typos(tokens):
@@ -132,13 +127,15 @@ district_text = st.text_input("District (Amphoe)")
 province_text = st.text_input("Province")
 postal_code_text = st.text_input("Postal Code")
 
-# Initialize global variables for tracking typos
+# Initialize global variables for tracking typos and cumulative results
 if 'original_tokens' not in st.session_state:
     st.session_state['original_tokens'] = []
     st.session_state['original_correct_tags'] = []
     st.session_state['modified_tokens'] = []
     st.session_state['modified_correct_tags'] = []
     st.session_state['typo_indices'] = {}
+    st.session_state['all_true_tags'] = []
+    st.session_state['all_predicted_tags'] = []
 
 # Run model and display results
 if st.button("Run Model"):
@@ -172,3 +169,13 @@ if st.button("Scramble"):
     st.session_state['typo_indices'] = {}
     update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
+# Simulate typos in tokens
+if st.button("Simulate Typo"):
+    st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
+    update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
+
+# Reset cumulative confusion matrix data
+if st.button("Reset Cumulative Data"):
+    st.session_state['all_true_tags'] = []
+    st.session_state['all_predicted_tags'] = []
+    st.success("Cumulative data reset successfully.")
