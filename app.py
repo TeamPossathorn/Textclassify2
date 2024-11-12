@@ -131,7 +131,7 @@ if 'all_predicted_tags' not in st.session_state:
     st.session_state['all_predicted_tags'] = []
 
 # Divide layout into three columns in one row
-col1, spacer, col2 = st.columns([1.5, 0.5, 2])
+col1, spacer, col2 = st.columns([1.25, 0.5, 2])
 
 # Column 1: Input Section
 # Custom CSS to adjust text input box size and font
@@ -150,7 +150,7 @@ st.markdown(
 )
 
 with col1:
-    st.markdown("<h2 style='font-size:24px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-size:28px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
     
     # Apply the custom class to each text input
     st.markdown("<p style='font-size:12px;'>Name</p>", unsafe_allow_html=True)
