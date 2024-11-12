@@ -134,8 +134,7 @@ if 'all_predicted_tags' not in st.session_state:
 col1, col2, col3 = st.columns([0.5, 2, 2])
 
 # Column 1: Input Section
-with col1:
-    # Custom CSS to adjust font size and padding for column1
+# Custom CSS to adjust font size and padding for column1
 st.markdown(
     """
     <style>
@@ -203,7 +202,6 @@ with col1:
         st.success("Cumulative data reset successfully.")
         
     st.markdown('</div>', unsafe_allow_html=True)
-
 
 # Column 2: Named Entity Distribution
 with col2:
