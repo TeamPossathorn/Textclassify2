@@ -105,11 +105,8 @@ if 'modified_tokens' not in st.session_state:
     st.session_state['modified_tokens'] = []
     st.session_state['typo_indices'] = {}
 
-# Function to introduce typos with error handling
+# Define typo introduction function
 def introduce_realistic_typos(tokens):
-    if not tokens:
-        return tokens, {}  # Return empty typo indices if tokens list is empty
-
     typo_indices = {}
     for idx in random.sample(range(len(tokens)), max(1, len(tokens) // 2)):
         token = tokens[idx]
@@ -130,6 +127,7 @@ def introduce_realistic_typos(tokens):
         tokens[idx] = ''.join(chars)
         typo_indices[idx] = i
     return tokens, typo_indices
+
 # Initialize session state variables
 if 'original_tokens' not in st.session_state:
     st.session_state['original_tokens'] = []
@@ -199,18 +197,10 @@ with col1:
         st.session_state['typo_indices'] = {}
         update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
-   # Update `modified_tokens` and `typo_indices` when Simulate Typo is pressed
     if st.button("Simulate Typo"):
-    # Check if modified_tokens is not empty and then introduce typos
-     if st.session_state['modified_tokens']:
-         tokens, typo_indices = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
-         st.session_state['modified_tokens'] = tokens
-         st.session_state['typo_indices'] = typo_indices
-         update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
-     else:
-         st.error("Error: No tokens available to simulate typos.")
-        
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
+        update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Column 2: Named Entity Distribution
 with col2:
