@@ -131,24 +131,9 @@ if 'all_predicted_tags' not in st.session_state:
     st.session_state['all_predicted_tags'] = []
 
 # Divide layout into three columns in one row
-col1, spacer, col2 = st.columns([1.25, 1, 2])
+col1, spacer, col2 = st.columns([1.25,0.5, 2])
 
 # Column 1: Input Section
-# Custom CSS to adjust text input box size and font
-st.markdown(
-    """
-    <style>
-    /* Apply custom style to all text input fields */
-    .custom-text-input input {
-        font-size: 12px;  /* Adjust font size inside input */
-        height: 20px;     /* Adjust height of the input box */
-        padding: 100px;     /* Add padding for better spacing */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 with col1:
     st.markdown("<h2 style='font-size:28px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
     
@@ -170,8 +155,8 @@ with col1:
 
     st.markdown("<p style='font-size:12px;'>Postal Code</p>", unsafe_allow_html=True)
     postal_code_text = st.text_input("", key="postal_code", placeholder="Enter Postal Code", help="Your postal code")
-st.markdown('</div>', unsafe_allow_html=True)
-with spacer:
+
+
     if st.button("Run Model"):
         full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
         tokens = full_address.split()
@@ -211,7 +196,7 @@ with spacer:
         st.session_state['all_predicted_tags'] = []
         st.success("Cumulative data reset successfully.")
         
-    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Column 2: Named Entity Distribution
 with col2:
