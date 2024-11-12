@@ -84,7 +84,7 @@ def plot_cumulative_confusion_matrix():
     labels = sorted(set(st.session_state['all_true_tags']) | set(st.session_state['all_predicted_tags']))
     cm = confusion_matrix(st.session_state['all_true_tags'], st.session_state['all_predicted_tags'], labels=labels)
     fig, ax = plt.subplots()
-    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Blues", ax=ax)
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Reds", ax=ax)
     plt.xlabel("Predicted Label")
     plt.ylabel("True Label")
     plt.title("Cumulative Confusion Matrix")
