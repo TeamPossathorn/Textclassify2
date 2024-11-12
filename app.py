@@ -172,7 +172,3 @@ if st.button("Scramble"):
     st.session_state['typo_indices'] = {}
     update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
-# Simulate typos in tokens
-if st.button("Simulate Typo"):
-    st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
-    update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
