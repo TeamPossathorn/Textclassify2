@@ -205,12 +205,16 @@ with col1:
 
 # Column 2: Named Entity Distribution
 with col2:
-    st.write("### Entity Distribution")
-    if st.session_state.get("all_predicted_tags"):
-        plot_entity_distribution(st.session_state["all_predicted_tags"])
+    # Row 1 in Column 2
+    with st.container():
+        st.markdown("### Entity Distribution")
+        # Entity distribution plot or content goes here
+        plot_entity_distribution(st.session_state.get("all_predicted_tags", []))
 
-# Column 3: Cumulative Confusion Matrix
-with col3:
-    st.write("### Cumulative Confusion Matrix")
+    # Row 2 in Column 2
+    with st.container():
+        st.write("### Cumulative Confusion Matrix")
     if st.session_state.get("all_true_tags") and st.session_state.get("all_predicted_tags"):
         plot_cumulative_confusion_matrix()
+
+
