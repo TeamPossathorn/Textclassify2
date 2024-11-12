@@ -127,14 +127,16 @@ district_text = st.text_input("District (Amphoe)")
 province_text = st.text_input("Province")
 postal_code_text = st.text_input("Postal Code")
 
-# Initialize global variables for tracking typos and cumulative results
+# Initialize session state variables
 if 'original_tokens' not in st.session_state:
     st.session_state['original_tokens'] = []
     st.session_state['original_correct_tags'] = []
     st.session_state['modified_tokens'] = []
     st.session_state['modified_correct_tags'] = []
     st.session_state['typo_indices'] = {}
+if 'all_true_tags' not in st.session_state:
     st.session_state['all_true_tags'] = []
+if 'all_predicted_tags' not in st.session_state:
     st.session_state['all_predicted_tags'] = []
 
 # Run model and display results
