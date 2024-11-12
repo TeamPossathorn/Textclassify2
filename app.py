@@ -200,7 +200,6 @@ with col1:
     if st.button("Simulate Typo"):
         st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
         update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
-st.markdown('</div>', unsafe_allow_html=True)
 
 # Column 2: Named Entity Distribution
 with col2:
