@@ -152,7 +152,7 @@ col1, spacer, col2 = st.columns([1, 0.5, 2])
 
 # Apply the custom style to column1
 with col1:
-   st.markdown("<h2 style='font-size:24px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-size:24px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
     # Adjusted font size for each label
     st.markdown("<p style='font-size:12px;'>Name</p>", unsafe_allow_html=True)
     name_text = st.text_input("", key="name")
