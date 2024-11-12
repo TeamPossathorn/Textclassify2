@@ -170,8 +170,8 @@ with col1:
 
     st.markdown("<p style='font-size:12px;'>Postal Code</p>", unsafe_allow_html=True)
     postal_code_text = st.text_input("", key="postal_code", placeholder="Enter Postal Code", help="Your postal code")
-
-
+st.markdown('</div>', unsafe_allow_html=True)
+with spacer:
     if st.button("Run Model"):
         full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
         tokens = full_address.split()
@@ -211,7 +211,7 @@ with col1:
         st.session_state['all_predicted_tags'] = []
         st.success("Cumulative data reset successfully.")
         
-    st.markdown('</div>', unsafe_allow_html=True)
+    
 
 # Column 2: Named Entity Distribution
 with col2:
