@@ -131,7 +131,7 @@ if 'all_predicted_tags' not in st.session_state:
     st.session_state['all_predicted_tags'] = []
 
 # Divide layout into three columns in one row
-col1, col2, col3 = st.columns([0.5, 2, 2])
+col1, col2, col3 = st.columns([1, 2, 2])
 
 # Column 1: Input Section
 # Custom CSS to adjust font size and padding for column1
@@ -139,8 +139,8 @@ st.markdown(
     """
     <style>
     .custom-column-style {
-        font-size: 18px;  /* Adjust font size */
-        padding: 10px;    /* Adjust padding for spacing within the column */
+        font-size: 12px;  /* Adjust font size */
+        padding: 6px;    /* Adjust padding for spacing within the column */
     }
     .custom-column-style h2 {
         font-size: 24px;  /* Adjust title font size */
