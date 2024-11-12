@@ -100,12 +100,15 @@ def update_display(tokens, correct_tags):
     st.session_state['all_predicted_tags'].extend(predicted_tags)
     #plot_cumulative_confusion_matrix()
 
-# Define typo introduction function with error handling
+# Initialize session state variables if they do not exist
+if 'modified_tokens' not in st.session_state:
+    st.session_state['modified_tokens'] = []
+    st.session_state['typo_indices'] = {}
+
+# Function to introduce typos with error handling
 def introduce_realistic_typos(tokens):
-    # Check if tokens is empty
     if not tokens:
-        st.error("Error: No tokens available to introduce typos.")
-        return tokens, {}
+        return tokens, {}  # Return empty typo indices if tokens list is empty
 
     typo_indices = {}
     for idx in random.sample(range(len(tokens)), max(1, len(tokens) // 2)):
@@ -127,7 +130,6 @@ def introduce_realistic_typos(tokens):
         tokens[idx] = ''.join(chars)
         typo_indices[idx] = i
     return tokens, typo_indices
-
 # Initialize session state variables
 if 'original_tokens' not in st.session_state:
     st.session_state['original_tokens'] = []
@@ -197,17 +199,16 @@ with col1:
         st.session_state['typo_indices'] = {}
         update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
+   # Update `modified_tokens` and `typo_indices` when Simulate Typo is pressed
     if st.button("Simulate Typo"):
-     if 'modified_tokens' in st.session_state and st.session_state['modified_tokens']:
-        st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
-        update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
+    # Check if modified_tokens is not empty and then introduce typos
+     if st.session_state['modified_tokens']:
+         tokens, typo_indices = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
+         st.session_state['modified_tokens'] = tokens
+         st.session_state['typo_indices'] = typo_indices
+         update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
      else:
-        st.error("Error: Modified tokens are empty or not initialized.")
-
-    if st.button("Reset Cumulative Data"):
-        st.session_state['all_true_tags'] = []
-        st.session_state['all_predicted_tags'] = []
-        st.success("Cumulative data reset successfully.")
+         st.error("Error: No tokens available to simulate typos.")
         
     st.markdown('</div>', unsafe_allow_html=True)
 
