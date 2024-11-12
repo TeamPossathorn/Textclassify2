@@ -89,12 +89,11 @@ def plot_cumulative_confusion_matrix():
 def update_display(tokens, correct_tags):
     predicted_tags = run_model(tokens)
     display_results(tokens, correct_tags, predicted_tags, st.session_state['typo_indices'])
-    if st.session_state['show_entity_distribution']:
-        plot_entity_distribution(predicted_tags)
+    plot_entity_distribution(predicted_tags)
+    # Accumulate results for cumulative confusion matrix
     st.session_state['all_true_tags'].extend(correct_tags)
     st.session_state['all_predicted_tags'].extend(predicted_tags)
-    if st.session_state['show_confusion_matrix']:
-        plot_cumulative_confusion_matrix()
+    plot_cumulative_confusion_matrix()
 
 # Define typo introduction function
 def introduce_realistic_typos(tokens):
@@ -119,6 +118,15 @@ def introduce_realistic_typos(tokens):
         typo_indices[idx] = i
     return tokens, typo_indices
 
+# Streamlit app UI setup
+st.title("Thai Address Tagging Model")
+name_text = st.text_input("Name")
+street_text = st.text_input("Street Address")
+subdistrict_text = st.text_input("Subdistrict (Tambon)")
+district_text = st.text_input("District (Amphoe)")
+province_text = st.text_input("Province")
+postal_code_text = st.text_input("Postal Code")
+
 # Initialize session state variables
 if 'original_tokens' not in st.session_state:
     st.session_state['original_tokens'] = []
@@ -130,77 +138,46 @@ if 'all_true_tags' not in st.session_state:
     st.session_state['all_true_tags'] = []
 if 'all_predicted_tags' not in st.session_state:
     st.session_state['all_predicted_tags'] = []
-if 'show_entity_distribution' not in st.session_state:
-    st.session_state['show_entity_distribution'] = True
-if 'show_confusion_matrix' not in st.session_state:
-    st.session_state['show_confusion_matrix'] = True
 
-# Layout
-top_left, top_right = st.columns(2)
-bottom_right = st.columns(1)
+# Run model and display results
+if st.button("Run Model"):
+    full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
+    tokens = full_address.split()
+    correct_tags = (
+        ['O'] * len(name_text.split()) +
+        ['ADDR'] * len(street_text.split()) +
+        ['LOC'] * len(subdistrict_text.split()) +
+        ['LOC'] * len(district_text.split()) +
+        ['LOC'] * len(province_text.split()) +
+        ['POST'] * len(postal_code_text.split())
+    )
+    if len(tokens) != len(correct_tags):
+        st.error("Error: Number of tokens and tags do not match.")
+    else:
+        st.session_state.update({
+            'original_tokens': tokens,
+            'original_correct_tags': correct_tags,
+            'modified_tokens': tokens.copy(),
+            'modified_correct_tags': correct_tags.copy(),
+            'typo_indices': {}
+        })
+        update_display(tokens, correct_tags)
 
-# Top-left: Input section
-with top_left:
-    st.title("Thai Address Tagging Model")
-    name_text = st.text_input("Name")
-    street_text = st.text_input("Street Address")
-    subdistrict_text = st.text_input("Subdistrict (Tambon)")
-    district_text = st.text_input("District (Amphoe)")
-    province_text = st.text_input("Province")
-    postal_code_text = st.text_input("Postal Code")
+# Scramble tokens
+if st.button("Scramble"):
+    combined = list(zip(st.session_state['modified_tokens'], st.session_state['modified_correct_tags']))
+    random.shuffle(combined)
+    st.session_state['modified_tokens'], st.session_state['modified_correct_tags'] = zip(*combined)
+    st.session_state['typo_indices'] = {}
+    update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
-    if st.button("Run Model"):
-        full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
-        tokens = full_address.split()
-        correct_tags = (
-            ['O'] * len(name_text.split()) +
-            ['ADDR'] * len(street_text.split()) +
-            ['LOC'] * len(subdistrict_text.split()) +
-            ['LOC'] * len(district_text.split()) +
-            ['LOC'] * len(province_text.split()) +
-            ['POST'] * len(postal_code_text.split())
-        )
-        if len(tokens) != len(correct_tags):
-            st.error("Error: Number of tokens and tags do not match.")
-        else:
-            st.session_state.update({
-                'original_tokens': tokens,
-                'original_correct_tags': correct_tags,
-                'modified_tokens': tokens.copy(),
-                'modified_correct_tags': correct_tags.copy(),
-                'typo_indices': {}
-            })
-            update_display(tokens, correct_tags)
+# Simulate typos in tokens
+if st.button("Simulate Typo"):
+    st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
+    update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
-    if st.button("Scramble"):
-        combined = list(zip(st.session_state['modified_tokens'], st.session_state['modified_correct_tags']))
-        random.shuffle(combined)
-        st.session_state['modified_tokens'], st.session_state['modified_correct_tags'] = zip(*combined)
-        st.session_state['typo_indices'] = {}
-        update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
-
-    if st.button("Simulate Typo"):
-        st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
-        update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
-
-    if st.button("Reset Cumulative Data"):
-        st.session_state['all_true_tags'] = []
-        st.session_state['all_predicted_tags'] = []
-        st.success("Cumulative data reset successfully.")
-
-
-# Top-right: Named Entity Distribution
-with top_right:
-    if st.session_state['show_entity_distribution']:
-        plot_entity_distribution(st.session_state.get('all_predicted_tags', []))
-
-# Bottom-left: Results display (e.g., token-by-token view)
-with bottom_left:
-    st.write("Results of Named Entity Recognition")
-    if st.session_state.get("modified_tokens"):
-        display_results(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'], st.session_state.get("all_predicted_tags", []), st.session_state['typo_indices'])
-
-# Bottom-right: Cumulative Confusion Matrix
-with bottom_right:
-    if st.session_state['show_confusion_matrix']:
-        plot_cumulative_confusion_matrix()
+# Reset cumulative confusion matrix data
+if st.button("Reset Cumulative Data"):
+    st.session_state['all_true_tags'] = []
+    st.session_state['all_predicted_tags'] = []
+    st.success("Cumulative data reset successfully.")
