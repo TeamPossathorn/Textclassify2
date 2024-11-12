@@ -134,37 +134,43 @@ if 'all_predicted_tags' not in st.session_state:
 col1, spacer, col2 = st.columns([1, 0.5, 2])
 
 # Column 1: Input Section
-# Custom CSS to adjust font size and padding for column1
+# Custom CSS to adjust text input box size and font
 st.markdown(
     """
     <style>
     /* Apply custom style to all text input fields */
     .custom-text-input input {
-        font-size: 12px;  /* Adjust font size inside input */
-        height: 10px;     /* Adjust height of the input box */
-        padding: 2px;     /* Add padding for better spacing */
+        font-size: 18px;  /* Adjust font size inside input */
+        height: 35px;     /* Adjust height of the input box */
+        padding: 5px;     /* Add padding for better spacing */
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Apply the custom style to column1
 with col1:
     st.markdown("<h2 style='font-size:24px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
-    # Adjusted font size for each label
-    st.markdown("<p style='font-size:12px;'>Name</p>", unsafe_allow_html=True)
-    name_text = st.text_input("", key="name")
-    st.markdown("<p style='font-size:12px;'>Street Address</p>", unsafe_allow_html=True)
-    street_text = st.text_input("", key="street_address")
-    st.markdown("<p style='font-size:12px;'>Subdistrict (Tambon)</p>", unsafe_allow_html=True)
-    subdistrict_text = st.text_input("", key="subdistrict")
-    st.markdown("<p style='font-size:12px;'>District (Amphoe)</p>", unsafe_allow_html=True)
-    district_text = st.text_input("", key="district")
-    st.markdown("<p style='font-size:12px;'>Province</p>", unsafe_allow_html=True)
-    province_text = st.text_input("", key="province")
-    st.markdown("<p style='font-size:12px;'>Postal Code</p>", unsafe_allow_html=True)
-    postal_code_text = st.text_input("", key="postal_code")
+    
+    # Apply the custom class to each text input
+    st.markdown("<p style='font-size:14px;'>Name</p>", unsafe_allow_html=True)
+    name_text = st.text_input("", key="name", placeholder="Enter Name", help="Your name")
+
+    st.markdown("<p style='font-size:14px;'>Street Address</p>", unsafe_allow_html=True)
+    street_text = st.text_input("", key="street_address", placeholder="Enter Street Address", help="Your street address")
+
+    st.markdown("<p style='font-size:14px;'>Subdistrict (Tambon)</p>", unsafe_allow_html=True)
+    subdistrict_text = st.text_input("", key="subdistrict", placeholder="Enter Subdistrict", help="Your subdistrict")
+
+    st.markdown("<p style='font-size:14px;'>District (Amphoe)</p>", unsafe_allow_html=True)
+    district_text = st.text_input("", key="district", placeholder="Enter District", help="Your district")
+
+    st.markdown("<p style='font-size:14px;'>Province</p>", unsafe_allow_html=True)
+    province_text = st.text_input("", key="province", placeholder="Enter Province", help="Your province")
+
+    st.markdown("<p style='font-size:14px;'>Postal Code</p>", unsafe_allow_html=True)
+    postal_code_text = st.text_input("", key="postal_code", placeholder="Enter Postal Code", help="Your postal code")
+
 
     if st.button("Run Model"):
         full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
