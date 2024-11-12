@@ -188,9 +188,6 @@ with top_left:
         st.session_state['all_predicted_tags'] = []
         st.success("Cumulative data reset successfully.")
 
-    # Toggle buttons for visualizations
-    st.session_state['show_entity_distribution'] = st.checkbox("Show Entity Distribution", value=st.session_state['show_entity_distribution'])
-    st.session_state['show_confusion_matrix'] = st.checkbox("Show Cumulative Confusion Matrix", value=st.session_state['show_confusion_matrix'])
 
 # Top-right: Named Entity Distribution
 with top_right:
