@@ -89,11 +89,12 @@ def plot_cumulative_confusion_matrix():
 def update_display(tokens, correct_tags):
     predicted_tags = run_model(tokens)
     display_results(tokens, correct_tags, predicted_tags, st.session_state['typo_indices'])
-    plot_entity_distribution(predicted_tags)
-    # Accumulate results for cumulative confusion matrix
+    if st.session_state['show_entity_distribution']:
+        plot_entity_distribution(predicted_tags)
     st.session_state['all_true_tags'].extend(correct_tags)
     st.session_state['all_predicted_tags'].extend(predicted_tags)
-    plot_cumulative_confusion_matrix()
+    if st.session_state['show_confusion_matrix']:
+        plot_cumulative_confusion_matrix()
 
 # Define typo introduction function
 def introduce_realistic_typos(tokens):
@@ -135,8 +136,11 @@ if 'show_confusion_matrix' not in st.session_state:
     st.session_state['show_confusion_matrix'] = True
 
 # Layout
-col1, col2 = st.columns([1, 2])
-with col1:
+top_left, top_right = st.columns(2)
+bottom_left, bottom_right = st.columns(2)
+
+# Top-left: Input section
+with top_left:
     st.title("Thai Address Tagging Model")
     name_text = st.text_input("Name")
     street_text = st.text_input("Street Address")
@@ -188,7 +192,18 @@ with col1:
     st.session_state['show_entity_distribution'] = st.checkbox("Show Entity Distribution", value=st.session_state['show_entity_distribution'])
     st.session_state['show_confusion_matrix'] = st.checkbox("Show Cumulative Confusion Matrix", value=st.session_state['show_confusion_matrix'])
 
-# Visualization containers
-with col2:
-    entity_dist_container = st.container()
-    confusion_matrix_container = st.container()
+# Top-right: Named Entity Distribution
+with top_right:
+    if st.session_state['show_entity_distribution']:
+        plot_entity_distribution(st.session_state.get('all_predicted_tags', []))
+
+# Bottom-left: Results display (e.g., token-by-token view)
+with bottom_left:
+    st.write("Results of Named Entity Recognition")
+    if st.session_state.get("modified_tokens"):
+        display_results(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'], st.session_state.get("all_predicted_tags", []), st.session_state['typo_indices'])
+
+# Bottom-right: Cumulative Confusion Matrix
+with bottom_right:
+    if st.session_state['show_confusion_matrix']:
+        plot_cumulative_confusion_matrix()
