@@ -198,10 +198,10 @@ with col1:
         update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
     if st.button("Simulate Typo"):
-    if 'modified_tokens' in st.session_state and st.session_state['modified_tokens']:
+     if 'modified_tokens' in st.session_state and st.session_state['modified_tokens']:
         st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
         update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
-    else:
+     else:
         st.error("Error: Modified tokens are empty or not initialized.")
 
     if st.button("Reset Cumulative Data"):
