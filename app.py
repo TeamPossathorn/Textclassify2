@@ -147,7 +147,7 @@ col1, spacer, col2 = st.columns([2,0.5, 2])
 
 # Column 1: Input Section
 with st.sidebar:
-    st.markdown("<h2 style='font-size:28px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
+    #st.markdown("<h2 style='font-size:28px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
     
     # Apply the custom class to each text input
     st.markdown("<p style='font-size:12px;'>Name</p>", unsafe_allow_html=True)
