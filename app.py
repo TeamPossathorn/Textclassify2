@@ -130,39 +130,8 @@ def introduce_realistic_typos(tokens):
         typo_indices[idx] = i
     return tokens, typo_indices
 
-def plot_sankey_chart(tokens, predicted_tags, correct_tags):
-    # Create labels for Sankey nodes
-    input_labels = tokens
-    predict_labels = predicted_tags
-    correct_labels = ["Correct" if p == c else "Incorrect" for p, c in zip(predicted_tags, correct_tags)]
 
-    # Combine all unique labels
-    all_labels = list(set(input_labels + predict_labels + correct_labels))
 
-    # Map labels to indices
-    source = [all_labels.index(x) for x in input_labels]
-    target1 = [all_labels.index(x) for x in predict_labels]
-    target2 = [all_labels.index(x) for x in correct_labels]
-
-    # Create Sankey links
-    source_links = source + target1
-    target_links = target1 + target2
-    value_links = [1] * len(source_links)  # Example: Set each link value to 1
-
-    # Create Sankey diagram
-    fig = go.Figure(go.Sankey(
-        node=dict(
-            pad=15,
-            thickness=20,
-            line=dict(color="black", width=0.5),
-            label=all_labels
-        ),
-        link=dict(
-            source=source_links,
-            target=target_links,
-            value=value_links
-        )
-    ))
 
 # Initialize session state variables
 if 'original_tokens' not in st.session_state:
@@ -251,10 +220,4 @@ with col2:
         plot_cumulative_confusion_matrix()
     
 
-with col3:   
-        st.markdown("<h3 style='font-size:22px; color:black;'>Sankey Plot</h3>", unsafe_allow_html=True)
-        plot_sankey_chart(
-            st.session_state['original_tokens'],
-            st.session_state['all_predicted_tags'],
-            st.session_state['all_true_tags']
-        )
+
