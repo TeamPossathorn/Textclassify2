@@ -254,6 +254,6 @@ with col2:
     if 'original_tokens' in st.session_state and st.session_state['original_tokens']:
         plot_sankey_chart(
             st.session_state['original_tokens'],
-            st.session_state.get['all_predicted_tags'],
-            st.session_state.get['all_true_tags']
+            st.session_state['all_predicted_tags'],
+            st.session_state['all_true_tags']
         )
