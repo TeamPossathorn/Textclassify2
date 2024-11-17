@@ -8,7 +8,7 @@ from collections import Counter
 import numpy as np
 
 # Load the model
-model = joblib.load("model2.joblib")
+model = joblib.load("model.joblib")
 
 # Define stopwords and feature extraction function
 stopwords = ["ผู้", "ที่", "ซึ่ง", "อัน"]
@@ -63,36 +63,32 @@ def display_results(tokens, correct_tags, predicted_tags, typo_indices):
         result_html += f'<span style="color:{color}">{token} - {predicted_tag}</span> '
     st.markdown(result_html, unsafe_allow_html=True)
 
-
 def plot_entity_distribution(predicted_tags):
-    if not predicted_tags:
-        st.write("No data available for entity distribution.")
-        return
     entity_counts = Counter(predicted_tags)
-    labels, values = zip(*entity_counts.items())
-    fig, ax = plt.subplots()
-    ax.bar(labels, values)
-    plt.xlabel('Entity Type')
-    plt.ylabel('Count')
-    plt.title('Entity Distribution in Predictions')
-    st.pyplot(fig)
-
+    
+    # Check if entity_counts has any items before unpacking
+    if entity_counts:
+        labels, values = zip(*entity_counts.items())
+        fig, ax = plt.subplots()
+        ax.bar(labels, values)
+        plt.xlabel('Entity Type')
+        plt.ylabel('Count')
+        plt.title('Entity Distribution in Predictions')
+        st.pyplot(fig)
+    else:
+        st.write("No predicted tags available for entity distribution.")
 
 
 # Plot cumulative confusion matrix
 def plot_cumulative_confusion_matrix():
-    if not st.session_state['all_true_tags'] or not st.session_state['all_predicted_tags']:
-        st.write("No data available for confusion matrix.")
-        return
     labels = sorted(set(st.session_state['all_true_tags']) | set(st.session_state['all_predicted_tags']))
     cm = confusion_matrix(st.session_state['all_true_tags'], st.session_state['all_predicted_tags'], labels=labels)
     fig, ax = plt.subplots()
-    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Reds", ax=ax)
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Blues", ax=ax)
     plt.xlabel("Predicted Label")
     plt.ylabel("True Label")
     plt.title("Cumulative Confusion Matrix")
     st.pyplot(fig)
-
 
 # Common function to update and display results
 def update_display(tokens, correct_tags):
@@ -114,7 +110,7 @@ def introduce_realistic_typos(tokens):
     typo_indices = {}
     for idx in random.sample(range(len(tokens)), max(1, len(tokens) // 2)):
         token = tokens[idx]
-        if not token:  # Skip empty tokens
+        if len(token) == 0:
             continue
         typo_type = random.choice(['substitute', 'omit', 'transpose', 'duplicate'])
         chars = list(token)
@@ -131,8 +127,6 @@ def introduce_realistic_typos(tokens):
         tokens[idx] = ''.join(chars)
         typo_indices[idx] = i
     return tokens, typo_indices
-
-
 
 # Initialize session state variables
 if 'original_tokens' not in st.session_state:
@@ -177,15 +171,13 @@ with col1:
         full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
         tokens = full_address.split()
         correct_tags = (
-        ['O'] * (len(name_text.split()) if name_text else 0) +
-        ['ADDR'] * (len(street_text.split()) if street_text else 0) +
-        ['LOC'] * (len(subdistrict_text.split()) if subdistrict_text else 0) +
-        ['LOC'] * (len(district_text.split()) if district_text else 0) +
-        ['LOC'] * (len(province_text.split()) if province_text else 0) +
-        ['POST'] * (len(postal_code_text.split()) if postal_code_text else 0)
+            ['O'] * len(name_text.split()) +
+            ['ADDR'] * len(street_text.split()) +
+            ['LOC'] * len(subdistrict_text.split()) +
+            ['LOC'] * len(district_text.split()) +
+            ['LOC'] * len(province_text.split()) +
+            ['POST'] * len(postal_code_text.split())
         )
-
-
         if len(tokens) != len(correct_tags):
             st.error("Error: Number of tokens and tags do not match.")
         else:
@@ -222,5 +214,3 @@ with col2:
         st.write("### Cumulative Confusion Matrix")
     if st.session_state.get("all_true_tags") and st.session_state.get("all_predicted_tags"):
         plot_cumulative_confusion_matrix()
-
-
