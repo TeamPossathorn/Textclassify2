@@ -212,6 +212,6 @@ with col1:
 with col2:
     # Row 2 in Column 2
     with st.container():
-        st.write("### Cumulative Confusion Matrix")
+        st.markdown("<h3 style='font-size:12px; color:black;'>Cumulative Confusion Matrix</h3>", unsafe_allow_html=True)
     if st.session_state.get("all_true_tags") and st.session_state.get("all_predicted_tags"):
         plot_cumulative_confusion_matrix()
