@@ -71,7 +71,7 @@ def plot_entity_distribution(predicted_tags):
     # Check if entity_counts has any items before unpacking
     if entity_counts:
         labels, values = zip(*entity_counts.items())
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(8, 6), dpi=240)  # Adjust size and DPI
         ax.bar(labels, values)
         plt.xlabel('Entity Type')
         plt.ylabel('Count')
