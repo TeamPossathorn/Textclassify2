@@ -146,7 +146,7 @@ if 'all_predicted_tags' not in st.session_state:
 col1, spacer, col2 = st.columns([1.25,0.5, 2])
 
 # Column 1: Input Section
-with col1:
+with st.sidebar:
     st.markdown("<h2 style='font-size:28px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
     
     # Apply the custom class to each text input
