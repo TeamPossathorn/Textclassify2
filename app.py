@@ -72,7 +72,7 @@ def plot_entity_distribution(predicted_tags):
     if entity_counts:
         labels, values = zip(*entity_counts.items())
         fig, ax = plt.subplots(figsize=(8, 6), dpi=240)  # Adjust size and DPI
-        ax.bar(labels, values)
+        ax.bar(labels, values,cmap = "Reds")
         plt.xlabel('Entity Type')
         plt.ylabel('Count')
         #plt.title('Entity Distribution in Predictions')
