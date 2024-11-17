@@ -8,7 +8,7 @@ from collections import Counter
 import numpy as np
 
 # Load the model
-model = joblib.load("model.joblib", ignore_imports=True)
+model = joblib.load("model.joblib")
 
 
 # Define stopwords and feature extraction function
