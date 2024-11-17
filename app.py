@@ -8,7 +8,7 @@ from collections import Counter
 import numpy as np
 
 # Load the model
-model = joblib.load("model.joblib")
+model = joblib.load("model2.joblib")
 
 # Define stopwords and feature extraction function
 stopwords = ["ผู้", "ที่", "ซึ่ง", "อัน"]
