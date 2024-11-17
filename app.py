@@ -74,7 +74,7 @@ def plot_entity_distribution(predicted_tags):
         #sorted_data = sorted(zip(labels, values), key=lambda x: x[1], reverse=True)
         #sorted_labels, sorted_values = zip(*sorted_data)
         fig, ax = plt.subplots(figsize=(8, 6), dpi=240)  # Adjust size and DPI
-        colors = ['blue', 'green', 'orange', 'purple']  # Example colors
+        colors = ['blue', 'green', 'orange', 'gray']  # Example colors
         ax.bar(labels, values, color=colors[:len(labels)])
         plt.xlabel('Entity Type')
         plt.ylabel('Count')
