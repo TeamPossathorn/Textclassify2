@@ -85,12 +85,13 @@ def plot_entity_distribution(predicted_tags):
 def plot_cumulative_confusion_matrix():
     labels = sorted(set(st.session_state['all_true_tags']) | set(st.session_state['all_predicted_tags']))
     cm = confusion_matrix(st.session_state['all_true_tags'], st.session_state['all_predicted_tags'], labels=labels)
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 4), dpi=120)  # Adjust size and DPI
     sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Reds", ax=ax)
+    ax.set_title("Cumulative Confusion Matrix", fontsize=14)  # Adjust font size
     plt.xlabel("Predicted Label")
     plt.ylabel("True Label")
-    plt.title("Cumulative Confusion Matrix")
     st.pyplot(fig)
+
 
 # Common function to update and display results
 def update_display(tokens, correct_tags):
