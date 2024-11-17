@@ -65,14 +65,22 @@ def display_results(tokens, correct_tags, predicted_tags, typo_indices):
         result_html += f'<span style="color:{color}">{token} - {predicted_tag}</span> '
     st.markdown(result_html, unsafe_allow_html=True)
 
+
 def plot_entity_distribution(predicted_tags):
     entity_counts = Counter(predicted_tags)
-    
+    entity_color_map = {
+    'ADDR': 'blue',
+    'LOC': 'green',
+    'POST': 'orange',
+    'O': 'gray'
+    }
+
+    colors = [entity_color_map.get(label, 'black') for label in labels]
     # Check if entity_counts has any items before unpacking
     if entity_counts:
         labels, values = zip(*entity_counts.items())
         fig, ax = plt.subplots(figsize=(8, 6), dpi=240)  # Adjust size and DPI
-        colors = ['red', 'blue', 'green', 'orange', 'purple']  # Example colors
+        #colors = ['red', 'blue', 'green', 'orange', 'purple']  # Example colors
         ax.bar(labels, values, color=colors[:len(labels)])
         plt.xlabel('Entity Type')
         plt.ylabel('Count')
