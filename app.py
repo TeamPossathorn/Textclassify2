@@ -1,12 +1,12 @@
 import streamlit as st
 import joblib
 import random
-import copy
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 from collections import Counter
 import numpy as np
+
 # Load the model
 model = joblib.load("model.joblib")
 
@@ -49,11 +49,10 @@ def tokens_to_features(tokens, i):
 # Function to run the model and display results
 def run_model(tokens):
     features = [tokens_to_features(tokens, i) for i in range(len(tokens))]
-    predicted_tags = model.predict([features])[0]
-    return predicted_tags
+    return model.predict([features])[0]
 
+# Display entities with color coding
 def display_results(tokens, correct_tags, predicted_tags, typo_indices):
-    # Display the results with color coding
     result_html = ''
     for i, (token, correct_tag, predicted_tag) in enumerate(zip(tokens, correct_tags, predicted_tags)):
         color = 'black' if correct_tag == predicted_tag else 'red'
@@ -66,115 +65,47 @@ def display_results(tokens, correct_tags, predicted_tags, typo_indices):
 
 def plot_entity_distribution(predicted_tags):
     entity_counts = Counter(predicted_tags)
-    labels, values = zip(*entity_counts.items())
+    
+    # Check if entity_counts has any items before unpacking
+    if entity_counts:
+        labels, values = zip(*entity_counts.items())
+        fig, ax = plt.subplots()
+        ax.bar(labels, values)
+        plt.xlabel('Entity Type')
+        plt.ylabel('Count')
+        plt.title('Entity Distribution in Predictions')
+        st.pyplot(fig)
+    else:
+        st.write("No predicted tags available for entity distribution.")
+
+
+# Plot cumulative confusion matrix
+def plot_cumulative_confusion_matrix():
+    labels = sorted(set(st.session_state['all_true_tags']) | set(st.session_state['all_predicted_tags']))
+    cm = confusion_matrix(st.session_state['all_true_tags'], st.session_state['all_predicted_tags'], labels=labels)
     fig, ax = plt.subplots()
-    ax.bar(labels, values)
-    plt.xlabel('Entity Type')
-    plt.ylabel('Count')
-    plt.title('Entity Distribution in Predictions')
-    st.pyplot(fig)
-
-def plot_confusion_matrix(correct_tags, predicted_tags):
-    labels = sorted(set(correct_tags) | set(predicted_tags))
-
-    # ตรวจสอบว่า correct_tags และ predicted_tags มีข้อมูลก่อนที่จะสร้าง Confusion Matrix
-    if len(correct_tags) == 0 or len(predicted_tags) == 0:
-        st.error("Error: No correct or predicted tags available for confusion matrix.")
-        return
-
-    # สร้าง Confusion Matrix
-    cm = confusion_matrix(correct_tags, predicted_tags, labels=labels)
-    
-    fig, ax = plt.subplots()
-    
-    # สร้าง mask สำหรับค่าในเส้นทแยงมุม (ค่าที่ทำนายถูก) และค่าที่ไม่อยู่ในเส้นทแยงมุม (ค่าที่ทำนายผิด)
-    mask_correct = np.eye(len(cm), dtype=bool)  # ค่าในเส้นทแยงมุม
-    mask_incorrect = ~mask_correct  # ค่าอื่นๆ ที่ไม่ใช่เส้นทแยงมุม
-
-    # Plot heatmap สำหรับค่าที่ทำนายถูก (แสดงด้วยสีน้ำเงิน)
-    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels,
-                cmap="Blues", mask=mask_incorrect, cbar=False, ax=ax)
-
-    # Plot heatmap สำหรับค่าที่ทำนายผิด (แสดงด้วยสีแดง)
-    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels,
-                cmap="Reds", mask=mask_correct, cbar=False, ax=ax)
-    
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Reds", ax=ax)
     plt.xlabel("Predicted Label")
     plt.ylabel("True Label")
-    plt.title("Confusion Matrix")
+    plt.title("Cumulative Confusion Matrix")
     st.pyplot(fig)
 
+# Common function to update and display results
+def update_display(tokens, correct_tags):
+    predicted_tags = run_model(tokens)
+    display_results(tokens, correct_tags, predicted_tags, st.session_state['typo_indices'])
+    #plot_entity_distribution(predicted_tags)
+    # Accumulate results for cumulative confusion matrix
+    st.session_state['all_true_tags'].extend(correct_tags)
+    st.session_state['all_predicted_tags'].extend(predicted_tags)
+    #plot_cumulative_confusion_matrix()
 
-# Initialize inputs and app layout
-st.title("Thai Address Tagging Model")
-st.write("กรอกข้อมูลที่อยู่และกดปุ่ม Run เพื่อประมวลผลแท็ก")
-
-name_text = st.text_input("Name")
-street_text = st.text_input("Street Address")
-subdistrict_text = st.text_input("Subdistrict (Tambon)")
-district_text = st.text_input("District (Amphoe)")
-province_text = st.text_input("Province")
-postal_code_text = st.text_input("Postal Code")
-
-# Initialize global variables for tracking typos
-if 'original_tokens' not in st.session_state:
-    st.session_state['original_tokens'] = []
-    st.session_state['original_correct_tags'] = []
+# Initialize session state variables if they do not exist
+if 'modified_tokens' not in st.session_state:
     st.session_state['modified_tokens'] = []
-    st.session_state['modified_correct_tags'] = []
     st.session_state['typo_indices'] = {}
 
-# Run model on input
-if st.button("Run Model"):
-    full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
-    tokens = full_address.split()
-    correct_tags = (
-        ['O'] * len(name_text.split()) +
-        ['ADDR'] * len(street_text.split()) +
-        ['LOC'] * len(subdistrict_text.split()) +
-        ['LOC'] * len(district_text.split()) +
-        ['LOC'] * len(province_text.split()) +
-        ['POST'] * len(postal_code_text.split())
-    )
-
-    if len(tokens) != len(correct_tags):
-        st.error("Error: Number of tokens and tags do not match.")
-    else:
-        st.session_state['original_tokens'] = tokens
-        st.session_state['original_correct_tags'] = correct_tags
-        st.session_state['modified_tokens'] = tokens.copy()
-        st.session_state['modified_correct_tags'] = correct_tags.copy()
-        st.session_state['typo_indices'] = {}
-
-        predicted_tags = run_model(tokens)
-        display_results(tokens, correct_tags, predicted_tags, st.session_state['typo_indices'])
-        
-        # Plot Entity Distribution Bar Chart
-        st.write("### Entity Distribution")
-        plot_entity_distribution(predicted_tags)
-
-        # Plot Confusion Matrix
-        st.write("### Confusion Matrix")
-        plot_confusion_matrix(correct_tags, predicted_tags)
-
-# Scramble tokens
-if st.button("Scramble"):
-    combined = list(zip(st.session_state['modified_tokens'], st.session_state['modified_correct_tags']))
-    random.shuffle(combined)
-    st.session_state['modified_tokens'], st.session_state['modified_correct_tags'] = zip(*combined)
-    st.session_state['typo_indices'] = {}
-    predicted_tags = run_model(st.session_state['modified_tokens'])
-    display_results(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'], predicted_tags, st.session_state['typo_indices'])
-
-# Reset tokens to original
-if st.button("Reset"):
-    st.session_state['modified_tokens'] = st.session_state['original_tokens'].copy()
-    st.session_state['modified_correct_tags'] = st.session_state['original_correct_tags'].copy()
-    st.session_state['typo_indices'] = {}
-    predicted_tags = run_model(st.session_state['modified_tokens'])
-    display_results(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'], predicted_tags, st.session_state['typo_indices'])
-
-# Simulate typos in tokens
+# Define typo introduction function
 def introduce_realistic_typos(tokens):
     typo_indices = {}
     for idx in random.sample(range(len(tokens)), max(1, len(tokens) // 2)):
@@ -197,7 +128,89 @@ def introduce_realistic_typos(tokens):
         typo_indices[idx] = i
     return tokens, typo_indices
 
-if st.button("Simulate Typo"):
-    st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
-    predicted_tags = run_model(st.session_state['modified_tokens'])
-    display_results(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'], predicted_tags, st.session_state['typo_indices'])
+# Initialize session state variables
+if 'original_tokens' not in st.session_state:
+    st.session_state['original_tokens'] = []
+    st.session_state['original_correct_tags'] = []
+    st.session_state['modified_tokens'] = []
+    st.session_state['modified_correct_tags'] = []
+    st.session_state['typo_indices'] = {}
+if 'all_true_tags' not in st.session_state:
+    st.session_state['all_true_tags'] = []
+if 'all_predicted_tags' not in st.session_state:
+    st.session_state['all_predicted_tags'] = []
+
+# Divide layout into three columns in one row
+col1, spacer, col2 = st.columns([1.25,0.5, 2])
+
+# Column 1: Input Section
+with col1:
+    st.markdown("<h2 style='font-size:28px;'>Thai Address Tagging Model</h2>", unsafe_allow_html=True)
+    
+    # Apply the custom class to each text input
+    st.markdown("<p style='font-size:12px;'>Name</p>", unsafe_allow_html=True)
+    name_text = st.text_input("", key="name", placeholder="Enter Name", help="Your name")
+
+    st.markdown("<p style='font-size:12px;'>Street Address</p>", unsafe_allow_html=True)
+    street_text = st.text_input("", key="street_address", placeholder="Enter Street Address", help="Your street address")
+
+    st.markdown("<p style='font-size:12px;'>Subdistrict (Tambon)</p>", unsafe_allow_html=True)
+    subdistrict_text = st.text_input("", key="subdistrict", placeholder="Enter Subdistrict", help="Your subdistrict")
+
+    st.markdown("<p style='font-size:12px;'>District (Amphoe)</p>", unsafe_allow_html=True)
+    district_text = st.text_input("", key="district", placeholder="Enter District", help="Your district")
+
+    st.markdown("<p style='font-size:12px;'>Province</p>", unsafe_allow_html=True)
+    province_text = st.text_input("", key="province", placeholder="Enter Province", help="Your province")
+
+    st.markdown("<p style='font-size:12px;'>Postal Code</p>", unsafe_allow_html=True)
+    postal_code_text = st.text_input("", key="postal_code", placeholder="Enter Postal Code", help="Your postal code")
+
+
+    if st.button("Run Model"):
+        full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
+        tokens = full_address.split()
+        correct_tags = (
+            ['O'] * len(name_text.split()) +
+            ['ADDR'] * len(street_text.split()) +
+            ['LOC'] * len(subdistrict_text.split()) +
+            ['LOC'] * len(district_text.split()) +
+            ['LOC'] * len(province_text.split()) +
+            ['POST'] * len(postal_code_text.split())
+        )
+        if len(tokens) != len(correct_tags):
+            st.error("Error: Number of tokens and tags do not match.")
+        else:
+            st.session_state.update({
+                'original_tokens': tokens,
+                'original_correct_tags': correct_tags,
+                'modified_tokens': tokens.copy(),
+                'modified_correct_tags': correct_tags.copy(),
+                'typo_indices': {}
+            })
+            update_display(tokens, correct_tags)
+
+    if st.button("Scramble"):
+        combined = list(zip(st.session_state['modified_tokens'], st.session_state['modified_correct_tags']))
+        random.shuffle(combined)
+        st.session_state['modified_tokens'], st.session_state['modified_correct_tags'] = zip(*combined)
+        st.session_state['typo_indices'] = {}
+        update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
+
+    if st.button("Simulate Typo"):
+        st.session_state['modified_tokens'], st.session_state['typo_indices'] = introduce_realistic_typos(st.session_state['modified_tokens'].copy())
+        update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
+
+# Column 2: Named Entity Distribution
+with col2:
+    # Row 1 in Column 2
+    with st.container():
+        st.markdown("### Entity Distribution")
+        # Entity distribution plot or content goes here
+        plot_entity_distribution(st.session_state.get("all_predicted_tags", []))
+
+    # Row 2 in Column 2
+    with st.container():
+        st.write("### Cumulative Confusion Matrix")
+    if st.session_state.get("all_true_tags") and st.session_state.get("all_predicted_tags"):
+        plot_cumulative_confusion_matrix()
