@@ -86,7 +86,8 @@ def plot_entity_distribution(predicted_tags):
 
 # Plot cumulative confusion matrix
 def plot_cumulative_confusion_matrix():
-    labels = sorted(set(st.session_state['all_true_tags']) | set(st.session_state['all_predicted_tags']))
+    labels = set(st.session_state['all_true_tags']) | set(st.session_state['all_predicted_tags'])
+    #labels = sorted(set(st.session_state['all_true_tags']) | set(st.session_state['all_predicted_tags']))
     cm = confusion_matrix(st.session_state['all_true_tags'], st.session_state['all_predicted_tags'], labels=labels)
     fig, ax = plt.subplots(figsize=(8, 6), dpi=240)  # Adjust size and DPI
     sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Reds", ax=ax)
