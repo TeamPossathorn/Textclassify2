@@ -204,13 +204,12 @@ with st.sidebar:
         update_display(st.session_state['modified_tokens'], st.session_state['modified_correct_tags'])
 
 # Column 2: Named Entity Distribution
-with col2:
-    # Row 1 in Column 2
-    with st.container():
+with col1:
+    
         st.markdown("### Entity Distribution")
         # Entity distribution plot or content goes here
         plot_entity_distribution(st.session_state.get("all_predicted_tags", []))
-
+with col2:
     # Row 2 in Column 2
     with st.container():
         st.write("### Cumulative Confusion Matrix")
