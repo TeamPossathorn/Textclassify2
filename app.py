@@ -63,20 +63,20 @@ def display_results(tokens, correct_tags, predicted_tags, typo_indices):
         result_html += f'<span style="color:{color}">{token} - {predicted_tag}</span> '
     st.markdown(result_html, unsafe_allow_html=True)
 
+
 def plot_entity_distribution(predicted_tags):
+    if not predicted_tags:
+        st.write("No data available for entity distribution.")
+        return
     entity_counts = Counter(predicted_tags)
-    
-    # Check if entity_counts has any items before unpacking
-    if entity_counts:
-        labels, values = zip(*entity_counts.items())
-        fig, ax = plt.subplots()
-        ax.bar(labels, values)
-        plt.xlabel('Entity Type')
-        plt.ylabel('Count')
-        plt.title('Entity Distribution in Predictions')
-        st.pyplot(fig)
-    else:
-        st.write("No predicted tags available for entity distribution.")
+    labels, values = zip(*entity_counts.items())
+    fig, ax = plt.subplots()
+    ax.bar(labels, values)
+    plt.xlabel('Entity Type')
+    plt.ylabel('Count')
+    plt.title('Entity Distribution in Predictions')
+    st.pyplot(fig)
+
 
 
 # Plot cumulative confusion matrix
@@ -133,6 +133,7 @@ def introduce_realistic_typos(tokens):
     return tokens, typo_indices
 
 
+
 # Initialize session state variables
 if 'original_tokens' not in st.session_state:
     st.session_state['original_tokens'] = []
@@ -176,13 +177,15 @@ with col1:
         full_address = f"{name_text} {street_text} {subdistrict_text} {district_text} {province_text} {postal_code_text}"
         tokens = full_address.split()
         correct_tags = (
-            ['O'] * len(name_text.split()) +
-            ['ADDR'] * len(street_text.split()) +
-            ['LOC'] * len(subdistrict_text.split()) +
-            ['LOC'] * len(district_text.split()) +
-            ['LOC'] * len(province_text.split()) +
-            ['POST'] * len(postal_code_text.split())
+        ['O'] * (len(name_text.split()) if name_text else 0) +
+        ['ADDR'] * (len(street_text.split()) if street_text else 0) +
+        ['LOC'] * (len(subdistrict_text.split()) if subdistrict_text else 0) +
+        ['LOC'] * (len(district_text.split()) if district_text else 0) +
+        ['LOC'] * (len(province_text.split()) if province_text else 0) +
+        ['POST'] * (len(postal_code_text.split()) if postal_code_text else 0)
         )
+
+
         if len(tokens) != len(correct_tags):
             st.error("Error: Number of tokens and tags do not match.")
         else:
