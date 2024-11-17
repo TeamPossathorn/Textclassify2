@@ -75,7 +75,7 @@ def plot_entity_distribution(predicted_tags):
         ax.bar(labels, values)
         plt.xlabel('Entity Type')
         plt.ylabel('Count')
-        plt.title('Entity Distribution in Predictions')
+        #plt.title('Entity Distribution in Predictions')
         st.pyplot(fig)
     else:
         st.write("No predicted tags available for entity distribution.")
@@ -206,12 +206,12 @@ with st.sidebar:
 # Column 2: Named Entity Distribution
 with col1:
     
-        st.markdown("<h3 style='font-size:24px; color:black;'>Entity Distribution</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='font-size:22px; color:black;'>Entity Distribution</h3>", unsafe_allow_html=True)
         # Entity distribution plot or content goes here
         plot_entity_distribution(st.session_state.get("all_predicted_tags", []))
 with col2:
     # Row 2 in Column 2
     with st.container():
-        st.markdown("<h3 style='font-size:24px; color:black;'>Cumulative Confusion Matrix</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='font-size:22px; color:black;'>Cumulative Confusion Matrix</h3>", unsafe_allow_html=True)
     if st.session_state.get("all_true_tags") and st.session_state.get("all_predicted_tags"):
         plot_cumulative_confusion_matrix()
