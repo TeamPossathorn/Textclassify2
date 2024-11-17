@@ -114,7 +114,7 @@ def introduce_realistic_typos(tokens):
     typo_indices = {}
     for idx in random.sample(range(len(tokens)), max(1, len(tokens) // 2)):
         token = tokens[idx]
-        if len(token) == 0:
+        if not token:  # Skip empty tokens
             continue
         typo_type = random.choice(['substitute', 'omit', 'transpose', 'duplicate'])
         chars = list(token)
@@ -131,6 +131,7 @@ def introduce_realistic_typos(tokens):
         tokens[idx] = ''.join(chars)
         typo_indices[idx] = i
     return tokens, typo_indices
+
 
 # Initialize session state variables
 if 'original_tokens' not in st.session_state:
