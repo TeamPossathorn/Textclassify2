@@ -71,11 +71,11 @@ def plot_entity_distribution(predicted_tags):
     # Check if entity_counts has any items before unpacking
     if entity_counts:
         labels, values = zip(*entity_counts.items())
-        sorted_data = sorted(zip(labels, values), key=lambda x: x[1], reverse=True)
-        sorted_labels, sorted_values = zip(*sorted_data)
+        #sorted_data = sorted(zip(labels, values), key=lambda x: x[1], reverse=True)
+        #sorted_labels, sorted_values = zip(*sorted_data)
         fig, ax = plt.subplots(figsize=(8, 6), dpi=240)  # Adjust size and DPI
         colors = ['red', 'blue', 'green', 'orange', 'purple']  # Example colors
-        ax.bar(sorted_labels, sorted_values, color=colors[:len(labels)])
+        ax.bar(labels, values, color=colors[:len(labels)])
         plt.xlabel('Entity Type')
         plt.ylabel('Count')
         #plt.title('Entity Distribution in Predictions')
