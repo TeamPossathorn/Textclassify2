@@ -8,3 +8,4 @@ scikit-learn
 pythainlp
 deepcut
 Counter
+sklearn-crfsuite
