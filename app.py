@@ -251,7 +251,6 @@ with col2:
         plot_cumulative_confusion_matrix()
     with st.container():
         st.markdown("<h3 style='font-size:22px; color:black;'>Sankey Plot</h3>", unsafe_allow_html=True)
-    if 'original_tokens' in st.session_state and st.session_state.get['original_tokens']:
         plot_sankey_chart(
             st.session_state['original_tokens'],
             st.session_state['all_predicted_tags'],
