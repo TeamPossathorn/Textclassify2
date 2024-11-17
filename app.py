@@ -146,7 +146,7 @@ if 'all_predicted_tags' not in st.session_state:
     st.session_state['all_predicted_tags'] = []
 
 # Divide layout into three columns in one row
-col1, spacer, col2 ,col3 = st.columns([5,0.5, 5,5])
+col1, spacer, col2 = st.columns([5,0.5, 5])
 
 # Column 1: Input Section
 with st.sidebar:
