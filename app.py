@@ -251,7 +251,7 @@ with col2:
         plot_cumulative_confusion_matrix()
     with st.container():
 
- with col3:   
+with col3:   
         st.markdown("<h3 style='font-size:22px; color:black;'>Sankey Plot</h3>", unsafe_allow_html=True)
         plot_sankey_chart(
             st.session_state['original_tokens'],
