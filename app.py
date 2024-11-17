@@ -249,7 +249,7 @@ with col2:
         st.markdown("<h3 style='font-size:22px; color:black;'>Cumulative Confusion Matrix</h3>", unsafe_allow_html=True)
     if st.session_state.get("all_true_tags") and st.session_state.get("all_predicted_tags"):
         plot_cumulative_confusion_matrix()
-    with st.container():
+    
 
 with col3:   
         st.markdown("<h3 style='font-size:22px; color:black;'>Sankey Plot</h3>", unsafe_allow_html=True)
