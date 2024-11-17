@@ -177,7 +177,7 @@ if 'all_predicted_tags' not in st.session_state:
     st.session_state['all_predicted_tags'] = []
 
 # Divide layout into three columns in one row
-col1, spacer, col2 = st.columns([5,0.5, 5])
+col1, spacer, col2 ,col3 = st.columns([5,0.5, 5,5])
 
 # Column 1: Input Section
 with st.sidebar:
@@ -250,6 +250,8 @@ with col2:
     if st.session_state.get("all_true_tags") and st.session_state.get("all_predicted_tags"):
         plot_cumulative_confusion_matrix()
     with st.container():
+
+ with col3:   
         st.markdown("<h3 style='font-size:22px; color:black;'>Sankey Plot</h3>", unsafe_allow_html=True)
         plot_sankey_chart(
             st.session_state['original_tokens'],
