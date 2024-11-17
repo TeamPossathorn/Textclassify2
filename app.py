@@ -87,7 +87,7 @@ def plot_cumulative_confusion_matrix():
     cm = confusion_matrix(st.session_state['all_true_tags'], st.session_state['all_predicted_tags'], labels=labels)
     fig, ax = plt.subplots(figsize=(10, 8), dpi=120)  # Adjust size and DPI
     sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Reds", ax=ax)
-    ax.set_title("Cumulative Confusion Matrix", fontsize=14)  # Adjust font size
+    ax.set_title("Cumulative Confusion Matrix", fontsize=36)  # Adjust font size
     plt.xlabel("Predicted Label")
     plt.ylabel("True Label")
     st.pyplot(fig)
