@@ -7,7 +7,7 @@ from sklearn.metrics import confusion_matrix
 from collections import Counter
 import numpy as np
 from sklearn_crfsuite import CRF
-
+import plotly.graph_objects as go
 
 # Load the model
 model = joblib.load("model.joblib")
